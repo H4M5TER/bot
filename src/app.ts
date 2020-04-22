@@ -2,7 +2,7 @@ import { App } from "koishi"
 import "koishi-database-mysql"
 
 import { MongoClient, Db } from "mongodb"
-let db: Db = null;
+let db: Db = null
 MongoClient.connect("mongodb://localhost:27017", {
     useUnifiedTopology: true
 }, (err, client) => {
@@ -59,7 +59,7 @@ app.command("添加待办 <待办事项...>")
 
 app.command("删除待办 <待办ID>")
     .action(({ meta }, id) => {
-        let collection = db.collection("task");
+        let collection = db.collection("task")
         collection.aggregate([{
             $match: {
                 group: meta.groupId,
@@ -102,36 +102,38 @@ app.command("删除待办 <待办ID>")
         }).catch(e => console.error(e))
     })
 
-// app.command("我的待办").action(async ({ meta }) => {
-//     db.collection("task").aggregate([{
-//         $match: {
-//             group: meta.groupId,
-//             user: meta.userId
-//         }
-//     }, {
-//         $project: {
-//             _id: false,
-//             task: true
-//         }
-//     }, {
-//         $unwind: "$task"
-//     }, {
-//         $sort: {
-//             "task.id": 1
-//         }
-//     }]).toArray().then(array => {
-//         array.forEach(task => { console.log(task) })
-//     }).catch(e => console.error(e))
-//     let task = (await db.collection("task")
-//         .findOne({ group: meta.groupId, user: meta.userId })).task
-//     task.forEach(task => {
-//         if ('group' === meta.messageType) {
-//             app.sender.sendGroupMsg(meta.groupId, task.)
-//         } else if ('private' === meta.messageType) {
-
-//         }
-//     })
-// })
+app.command("我的待办").action(async ({ meta }) => {
+    db.collection("task").aggregate([{
+        $match: {
+            group: meta.groupId,
+            user: meta.userId
+        }
+    }, {
+        $project: {
+            _id: false,
+            task: true
+        }
+    }, {
+        $unwind: "$task"
+        //去掉这个any
+    }]).toArray().then(array => {
+        let send: (groupId: number, message: string, autoEscape?: boolean) => Promise<number>
+        let message: string
+        if ('group' === meta.messageType) {
+            send = app.sender.sendGroupMsg
+        } else if ('private' === meta.messageType) {
+            send = app.sender.sendPrivateMsg
+        } else {
+            console.error("wrong message type")
+        }
+        // 去掉这个any
+        array.forEach(({ task }) => {
+            // 更好的做法？
+            message += task.id + ". " + task.message + "\n"
+        })
+        send(meta.groupId, message)
+    }).catch((e: ExceptionInformation) => console.error(e))
+})
 
 app.start()
-    .catch((err: ExceptionInformation) => { console.error(err) })
+    .catch((e: ExceptionInformation) => console.error(e))
