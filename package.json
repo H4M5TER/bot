@@ -1,0 +1,25 @@
+{
+	"name": "qqbot",
+	"private": true,
+	"version": "0.1.0",
+	"engines": {
+		"node": ">=12.16.2"
+	},
+	"repository": "github:H4M5TER/workflow-bot",
+	"homepage": "https://github.com/h4m5ter/co-workflow-bot#readme",
+	"bugs": "https://github.com/h4m5ter/co-workflow-bot/issues",
+	"license": "MIT",
+	"author": "H4M5TER <zhuxx2003@163.com> (https://github.com/h4m5ter/)",
+	"dependencies": {
+		"koishi": "^1.9.0",
+		"koishi-database-mysql": "^1.1.7",
+		"mongodb": "^3.5.6"
+	},
+	"devDependencies": {
+		"@types/mongodb": "^3.5.9",
+		"@types/node": "^13.13.1",
+		"ts-node": "^8.9.0",
+		"typescript": "^3.8.3"
+	},
+	"scripts": {}
+}
