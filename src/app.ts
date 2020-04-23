@@ -25,7 +25,7 @@ app.command("添加待办 <待办事项...>", { authority: 0 })
         let collection = db.collection<Term>("task")
         let tasks = await collection.findOne({ group: meta.groupId, user: meta.userId })
             .catch((e: Error) => console.error(e))
-        if (null === tasks || undefined === tasks) {
+        if (null === tasks || tasks === void 2) {
             collection.insertOne({
                 group: meta.groupId!,
                 user: meta.userId!,
@@ -47,7 +47,7 @@ app.command("添加待办 <待办事项...>", { authority: 0 })
             }, {
                 $push: {
                     task: {
-                        id: tasks.count,
+                        id: tasks.count + 1,
                         message: _message
                     }
                 },
@@ -133,9 +133,9 @@ app.command("排序待办 <初始序号> <目标序号>", { authority: 0 })
     .action(async ({ meta }, _id, _target_id) => {
         let id = parseInt(_id), target_id = parseInt(_target_id), left: number, right: number, inc: number
         if (id > target_id)
-            [left, right, inc] = [target_id, id - 1, -1]
+            [left, right, inc] = [target_id, id - 1, 1]
         else
-            [left, right, inc] = [id + 1, target_id, 1]
+            [left, right, inc] = [id + 1, target_id, -1]
         let collection = db.collection<Task>("task")
         collection.aggregate([{
             $match: {
@@ -158,11 +158,12 @@ app.command("排序待办 <初始序号> <目标序号>", { authority: 0 })
             let new_array: Array<Task> = []
             let target_task: Task
             (<Array<UnwindedTask>>unwinded_tasks).forEach(({ task }) => {
-                if (left <= task.id && task.id <= right) {
-                    task.id += inc
+                if (task.id !== id) {
+                    if (left <= task.id && task.id <= right)
+                        task.id += inc
                     new_array.push(task)
                 }
-                else if (task.id === id) {
+                else {
                     task.id = target_id
                     target_task = task
                 }
@@ -177,6 +178,7 @@ app.command("排序待办 <初始序号> <目标序号>", { authority: 0 })
                 }
             }).catch((e: Error) => console.error(e))
         }).catch((e: Error) => console.error(e))
+        meta.$send!("序号已变更")
     })
 
 app.start()
