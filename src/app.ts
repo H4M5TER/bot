@@ -59,7 +59,7 @@ app.command("添加待办 <待办事项...>", { authority: 0 })
         let collection = db.collection<Term>("task")
         let tasks = await collection.findOne({ group: meta.groupId, user: meta.userId })
             .catch((e: Error) => console.error(e))
-        if (null === tasks || undefined === tasks)
+        if (null === tasks || undefined === tasks) {
             collection.insertOne({
                 group: meta.groupId!,
                 user: meta.userId!,
@@ -69,6 +69,11 @@ app.command("添加待办 <待办事项...>", { authority: 0 })
                     message: _message
                 }]
             }).catch((e: Error) => console.error(e))
+            collection.createIndex({
+                user: 1,
+                group: 1
+            })
+        }
         else {
             collection.updateOne({
                 group: meta.groupId,
