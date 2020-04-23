@@ -158,5 +158,55 @@ app.command("删除待办 <待办ID>", { authority: 0 })
         meta.$send!("删除成功")
     })
 
+app.command("排序待办 <初始序号> <目标序号>", { authority: 0 })
+    .action(async ({ meta }, _id, _target_id) => {
+        let id = parseInt(_id), target_id = parseInt(_target_id), left: number, right: number, inc: number
+        if (id > target_id)
+            [left, right, inc] = [target_id, id - 1, -1]
+        else
+            [left, right, inc] = [id + 1, target_id, 1]
+        let collection = db.collection<Task>("task")
+        collection.aggregate([{
+            $match: {
+                group: meta.groupId,
+                user: meta.userId
+            }
+        }, {
+            $project: {
+                _id: false,
+                task: true,
+                count: true
+            }
+        }, {
+            $unwind: "$task"
+        }]).toArray().then((unwinded_tasks: any) => {
+            if (id <= 0 || id > unwinded_tasks.count || target_id <= 0 || target_id > unwinded_tasks.count) {
+                meta.$send!("序号超出范围")
+                return
+            }
+            let new_array: Array<Task> = []
+            let target_task: Task
+            (<Array<UnwindedTask>>unwinded_tasks).forEach(({ task }) => {
+                if (left <= task.id && task.id <= right) {
+                    task.id += inc
+                    new_array.push(task)
+                }
+                else if (task.id === id) {
+                    task.id = target_id
+                    target_task = task
+                }
+            })
+            new_array.splice(target_id - 1, 0, target_task!)
+            collection.updateOne({
+                group: meta.groupId,
+                user: meta.userId
+            }, {
+                $set: {
+                    task: new_array
+                }
+            }).catch((e: Error) => console.error(e))
+        }).catch((e: Error) => console.error(e))
+    })
+
 app.start()
     .catch((e: Error) => console.error(e))
