@@ -49,13 +49,16 @@ interface Task {
     id: number
     message: string;
 }
+interface UnwindedTask {
+    task: Task
+}
 
 
 app.command("添加待办 <待办事项...>", { authority: 0 })
     .action(async ({ meta }, _message) => {
         let collection = db.collection<Term>("task")
         let tasks = await collection.findOne({ group: meta.groupId, user: meta.userId })
-            .catch((e: ExceptionInformation) => console.error(e))
+            .catch((e: Error) => console.error(e))
         if (null === tasks || undefined === tasks)
             collection.insertOne({
                 group: meta.groupId!,
@@ -65,21 +68,22 @@ app.command("添加待办 <待办事项...>", { authority: 0 })
                     id: 1,
                     message: _message
                 }]
-            }).catch((e: ExceptionInformation) => console.error(e))
+            }).catch((e: Error) => console.error(e))
         else {
-            let count = <number>tasks.count + 1
             collection.updateOne({
                 group: meta.groupId,
                 user: meta.userId
             }, {
                 $push: {
                     task: {
-                        id: count,
+                        id: tasks.count,
                         message: _message
                     }
                 },
-                $set: { count: count }
-            }).catch((e: ExceptionInformation) => console.error(e))
+                $inc: {
+                    count: 1
+                }
+            }).catch((e: Error) => console.error(e))
         }
         meta.$send!("添加成功")
     })
@@ -99,17 +103,15 @@ app.command("我的待办", { authority: 0 })
             }
         }, {
             $unwind: "$task"
-            //去掉这个any
-        }]).toArray().then((array: any) => {
-            let message = ""
-            // 去掉这个any
-            array.forEach(({ task }) => {
+        }]).toArray().then((unwinded_tasks: any) => { // 这个 any 是去不掉了
+            let message = ""; //
+            (<Array<UnwindedTask>>unwinded_tasks).forEach(({ task }) => {
                 // 更好的做法？
                 message += task.id + ". " + task.message + "\n"
             })
             meta.$send!(message)
-                .catch((e: ExceptionInformation) => console.error(e))
-        }).catch((e: ExceptionInformation) => console.error(e))
+                .catch((e: Error) => console.error(e))
+        }).catch((e: Error) => console.error(e))
     })
 
 app.command("删除待办 <待办ID>", { authority: 0 })
@@ -134,18 +136,9 @@ app.command("删除待办 <待办ID>", { authority: 0 })
                     $ne: id
                 }
             }
-        }]).toArray().then((array: any) => {
-            collection.updateOne({
-                group: meta.groupId,
-                user: meta.userId
-            }, {
-                $unset: {
-                    task: ""
-                }
-            }).catch((e: ExceptionInformation) => console.error(e))
-            // 去掉这个any
-            let new_array: Array<any> = []
-            array.forEach(({ task }) => {
+        }]).toArray().then((unwinded_tasks: any) => {
+            let new_array: Task[] = [];
+            (<Array<UnwindedTask>>unwinded_tasks).forEach(({ task }) => {
                 if (task.id > id)
                     task.id -= 1
                 new_array.push(task)
@@ -160,10 +153,10 @@ app.command("删除待办 <待办ID>", { authority: 0 })
                 $inc: {
                     count: -1
                 }
-            }).catch((e: ExceptionInformation) => console.error(e))
-        }).catch((e: ExceptionInformation) => console.error(e))
+            }).catch((e: Error) => console.error(e))
+        }).catch((e: Error) => console.error(e))
         meta.$send!("删除成功")
     })
 
 app.start()
-    .catch((e: ExceptionInformation) => console.error(e))
+    .catch((e: Error) => console.error(e))
