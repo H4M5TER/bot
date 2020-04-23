@@ -1,38 +1,4 @@
-import { App } from "koishi"
-import "koishi-database-mysql"
-
-import { MongoClient, Db } from "mongodb"
-import { AssertionError } from "assert"
-
-let db: Db;
-MongoClient.connect("mongodb://localhost:27017", {
-    useUnifiedTopology: true,
-    // loggerLevel: "debug"
-}, (err, client) => {
-    if (err != null) {
-        console.error(err)
-        client.close()
-    }
-    else {
-        db = client.db("bot")
-    }
-})
-
-const app = new App({
-    type: "http",
-    port: 8080,
-    server: "http://localhost:5700",
-    selfId: 2993397759,
-    database: {
-        mysql: {
-            host: "localhost",
-            port: 3306,
-            user: "root",
-            password: "pswd4MYSQL",
-            database: "koishi"
-        }
-    }
-})
+import { db, app } from "./config"
 
 app.receiver.on("message", (meta) => {
     console.log(meta.groupId)
