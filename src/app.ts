@@ -4,7 +4,8 @@ import "koishi-database-mysql"
 import { MongoClient, Db } from "mongodb"
 let db: Db = null
 MongoClient.connect("mongodb://localhost:27017", {
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    // loggerLevel: "debug"
 }, (err, client) => {
     if (err != null) {
         console.error(err)
@@ -36,29 +37,69 @@ app.receiver.on("message", (meta) => {
     console.log(meta.userId)
 })
 
-app.command("添加待办 <待办事项...>")
+app.command("添加待办 <待办事项...>", { authority: 0 })
     .action(async ({ meta }, _message) => {
         let collection = db.collection("task")
         let tasks = await collection.findOne({ group: meta.groupId, user: meta.userId })
+            .catch((e: ExceptionInformation) => console.error(e))
         if (null === tasks)
-            collection.insertOne({ group: meta.groupId, user: meta.userId, count: 0 })
-        let count = <number>tasks.count + 1
-        collection.updateOne({
-            group: meta.groupId,
-            user: meta.userId
-        }, {
-            $push: {
-                task: {
-                    id: count,
+            collection.insertOne({
+                group: meta.groupId,
+                user: meta.userId,
+                count: 1,
+                task: [{
+                    id: 1,
                     message: _message
-                }
-            },
-            $set: { count: count }
-        }).catch(err => console.log(err))
+                }]
+            }).catch((e: ExceptionInformation) => console.error(e))
+        else {
+            let count = <number>tasks.count + 1
+            collection.updateOne({
+                group: meta.groupId,
+                user: meta.userId
+            }, {
+                $push: {
+                    task: {
+                        id: count,
+                        message: _message
+                    }
+                },
+                $set: { count: count }
+            }).catch((e: ExceptionInformation) => console.error(e))
+        }
+        meta.$send("添加成功")
     })
 
-app.command("删除待办 <待办ID>")
-    .action(({ meta }, id) => {
+app.command("我的待办", { authority: 0 })
+    .action(async ({ meta }) => {
+        db.collection("task").aggregate([{
+            $match: {
+                group: meta.groupId,
+                user: meta.userId
+            }
+        }, {
+            $project: {
+                _id: false,
+                task: true
+            }
+        }, {
+            $unwind: "$task"
+            //去掉这个any
+        }]).toArray().then(array => {
+            let message = ""
+            // 去掉这个any
+            array.forEach(({ task }) => {
+                // 更好的做法？
+                message += task.id + ". " + task.message + "\n"
+            })
+            meta.$send(message)
+                .catch((e: ExceptionInformation) => console.error(e))
+        }).catch((e: ExceptionInformation) => console.error(e))
+    })
+
+app.command("删除待办 <待办ID>", { authority: 0 })
+    .action(({ meta }, _id) => {
+        let id = parseInt(_id)
         let collection = db.collection("task")
         collection.aggregate([{
             $match: {
@@ -78,7 +119,7 @@ app.command("删除待办 <待办ID>")
                     $ne: id
                 }
             }
-        }]).toArray().then(tasks => {
+        }]).toArray().then(array => {
             collection.updateOne({
                 group: meta.groupId,
                 user: meta.userId
@@ -86,54 +127,28 @@ app.command("删除待办 <待办ID>")
                 $unset: {
                     task: ""
                 }
-            })
-            tasks.forEach(({ task }) => {
-                if (id < task.id)
+            }).catch((e: ExceptionInformation) => console.error(e))
+            // 去掉这个any
+            let new_array: Array<any> = []
+            array.forEach(({ task }) => {
+                if (task.id > id)
                     task.id -= 1
-                collection.update({
-                    group: null,
-                    user: 860844980
-                }, {
-                    $push: {
-                        task: task
-                    }
-                })
+                new_array.push(task)
             })
-        }).catch(e => console.error(e))
+            collection.updateOne({
+                group: meta.groupId,
+                user: meta.userId
+            }, {
+                $set: {
+                    task: new_array
+                },
+                $inc: {
+                    count: -1
+                }
+            }).catch((e: ExceptionInformation) => console.error(e))
+        }).catch((e: ExceptionInformation) => console.error(e))
+        meta.$send("删除成功")
     })
-
-app.command("我的待办").action(async ({ meta }) => {
-    db.collection("task").aggregate([{
-        $match: {
-            group: meta.groupId,
-            user: meta.userId
-        }
-    }, {
-        $project: {
-            _id: false,
-            task: true
-        }
-    }, {
-        $unwind: "$task"
-        //去掉这个any
-    }]).toArray().then(array => {
-        let send: (groupId: number, message: string, autoEscape?: boolean) => Promise<number>
-        let message: string
-        if ('group' === meta.messageType) {
-            send = app.sender.sendGroupMsg
-        } else if ('private' === meta.messageType) {
-            send = app.sender.sendPrivateMsg
-        } else {
-            console.error("wrong message type")
-        }
-        // 去掉这个any
-        array.forEach(({ task }) => {
-            // 更好的做法？
-            message += task.id + ". " + task.message + "\n"
-        })
-        send(meta.groupId, message)
-    }).catch((e: ExceptionInformation) => console.error(e))
-})
 
 app.start()
     .catch((e: ExceptionInformation) => console.error(e))
