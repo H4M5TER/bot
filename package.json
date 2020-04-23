@@ -13,7 +13,8 @@
 	"dependencies": {
 		"koishi": "^1.9.0",
 		"koishi-database-mysql": "^1.1.7",
-		"mongodb": "^3.5.6"
+		"mongodb": "^3.5.6",
+		"bilibili-live-ws": "^4.2.0"
 	},
 	"devDependencies": {
 		"@types/mongodb": "^3.5.9",

@@ -1,9 +1,5 @@
 import { db, app } from "./config"
-
-app.receiver.on("message", (meta) => {
-    console.log(meta.groupId)
-    console.log(meta.userId)
-})
+import { LiveTCP } from "bilibili-live-ws"
 
 interface Term {
     group: number;
@@ -19,6 +15,10 @@ interface UnwindedTask {
     task: Task
 }
 
+app.receiver.on("message", (meta) => {
+    console.log(meta.groupId)
+    console.log(meta.userId)
+})
 
 app.command("添加待办 <待办事项...>", { authority: 0 })
     .action(async ({ meta }, _message) => {
@@ -183,3 +183,19 @@ app.command("排序待办 <初始序号> <目标序号>", { authority: 0 })
 
 app.start()
     .catch((e: Error) => console.error(e))
+
+let room_id = 21208533, group_id = 743492765
+let room = new LiveTCP(room_id)
+room.on("live", () => {
+    console.log("直播间已连接")
+})
+room.on("msg", (data) => {
+    if (data.cmd === "LIVE") {
+        app.sender.sendGroupMsg(group_id, "大凤开播了")
+        app.sender.setGroupWholeBan(group_id, true)
+    }
+    if (data.cmd === "PREPARING") {
+        app.sender.sendGroupMsg(group_id, "大凤下播了")
+        app.sender.setGroupWholeBan(group_id, false)
+    }
+})
