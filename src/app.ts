@@ -1,10 +1,11 @@
 import { app, user, config, groups } from "./config"
 import { LiveTCP } from "bilibili-live-ws"
 import axios, { AxiosRequestConfig } from "axios"
+import { appendFile } from "fs"
 
 app.receiver.on("message", async (meta) => {
     try {
-        console.log(`${(await app.sender.getGroupInfo(meta.groupId!)).groupName}(${meta.groupId})\n\t${meta.sender?.nickname}(${meta.userId}):${meta.message}`)
+        console.log(`${(new Date(meta.time!)).toLocaleTimeString()}${(await app.sender.getGroupInfo(meta.groupId!)).groupName}(${meta.groupId})\n\t${meta.sender?.nickname}(${meta.userId}):${meta.message}`)
     } catch (e) {
         console.error(e)
     }
@@ -33,6 +34,10 @@ room.on("live", () => {
 })
 room.on("msg", (data) => {
     try {
+        if (data.cmd === "DANMU_MSG") {
+            let date = new Date()
+            appendFile(`danmaku_${date.toLocaleDateString()}.log`, `[${date.toLocaleTimeString()}]${data.info[2][1]}(${data.info[2][0]}):${data.info[1]}`, () => { })
+        }
         if (data.cmd === "LIVE") {
             groups.forEach(async group_id => {
                 // TODO: 随机发表情包
@@ -101,9 +106,11 @@ let polling_dynamic = async () => {
     setTimeout(polling_dynamic, config.delay)
 }
 axios.request<SpaceHistory>(dynamic_request_config).then(resp => {
-    if (last_ts = resp.data.data.cards[0].desc.timestamp)
+    if (last_ts = resp.data.data.cards[0].desc.timestamp) {
         // 任何falsy value都throw 包括 0 undefined null
         setTimeout(polling_dynamic, config.delay)
+        console.log("动态已连接")
+    }
     else
         throw "连接动态失败";
 }).catch(e => console.error(e))
