@@ -1,5 +1,6 @@
 import { db, app } from "./config"
 import { LiveTCP } from "bilibili-live-ws"
+import axios, { AxiosRequestConfig } from "axios"
 
 interface Term {
     group: number;
@@ -199,3 +200,54 @@ room.on("msg", (data) => {
         app.sender.setGroupWholeBan(group_id, false)
     }
 })
+
+interface Card {
+    card: string,
+    desc: {
+        dynamic_id_str: string,
+        timestamp: number
+    }
+}
+interface SpaceHistory {
+    data: {
+        cards: Card[]
+    }
+}
+let user_id = 281426315, polling_delay = 60 * 1000, last_ts: number
+let request_config: AxiosRequestConfig = {
+    url: "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
+    method: "get",
+    params: {
+        host_uid: user_id,
+        need_top: false
+    }
+}
+let polling_dynamic = async () => {
+    (await axios.request/*<SpaceHistory>*/(request_config)
+        .then(resp => resp.data.data.cards)
+        // axios即使catch了也不收窄类型就离谱 
+        // void | AxiosResponse 不存在成员 data
+        // 直接导致了这个傻逼then
+        .catch((e: Error) => console.error(e)))
+        // 本来request<SpaceHistory>就有类型标注了
+        // 结果没有类型收窄又是 void | Card[] 不存在成员 filter
+        // 直接导致这里连用三个any
+        .filter((v: any) => v.desc.timestamp > last_ts)
+        .map((v: any) => <Object>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}` })
+        .forEach((v: any) => {
+            if (v.category === "daily") {
+                app.sender.sendGroupMsg(group_id, `${name}发布了相簿:\n${v.description}\n${v.address}`)
+            }
+            else {
+                app.sender.sendGroupMsg(group_id, `${name}发布了动态:\n${v.content}\n${v.address}`)
+            }
+        })
+    setTimeout(polling_dynamic, polling_delay)
+}
+axios.request<SpaceHistory>(request_config).then(resp => {
+    if (last_ts = resp.data.data.cards[0].desc.timestamp)
+        // 任何falsy value都throw 包括 0 undefined null
+        setTimeout(polling_dynamic, polling_delay)
+    else
+        throw "连接动态失败";
+}).catch(e => console.error(e))
