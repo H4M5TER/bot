@@ -185,21 +185,37 @@ app.command("排序待办 <初始序号> <目标序号>", { authority: 0 })
 app.start()
     .catch((e: Error) => console.error(e))
 
-let room_id = 21208533, group_id = 743492765
+interface room_info {
+    data: {
+        room_info: {
+            title: string
+        }
+    }
+}
+let room_id = 21208533, group_id = 743492765, name = "大凤"
+let room_address = `https://live.bilibili.com/${room_id}`, live_request_config: AxiosRequestConfig = {
+    url: "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom",
+    method: "get",
+    params: {
+        room_id: room_id
+    }
+}
 let room = new LiveTCP(room_id)
 room.on("live", () => {
     console.log("直播间已连接")
 })
-room.on("msg", (data) => {
+room.on("msg", async (data) => {
+    // TODO: 随机发表情包
     if (data.cmd === "LIVE") {
-        app.sender.sendGroupMsg(group_id, "大凤开播了")
+        app.sender.sendGroupMsg(group_id, `${name}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
         app.sender.setGroupWholeBan(group_id, true)
     }
     if (data.cmd === "PREPARING") {
-        app.sender.sendGroupMsg(group_id, "大凤下播了")
+        app.sender.sendGroupMsg(group_id, `${name}下播了`)
         app.sender.setGroupWholeBan(group_id, false)
     }
 })
+room.on("error", e => console.error(e))
 
 interface Card {
     card: string,
@@ -213,8 +229,11 @@ interface SpaceHistory {
         cards: Card[]
     }
 }
+interface Picture {
+    img_src: string
+}
 let user_id = 281426315, polling_delay = 60 * 1000, last_ts: number
-let request_config: AxiosRequestConfig = {
+let dynamic_request_config: AxiosRequestConfig = {
     url: "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
     method: "get",
     params: {
@@ -223,7 +242,7 @@ let request_config: AxiosRequestConfig = {
     }
 }
 let polling_dynamic = async () => {
-    (await axios.request/*<SpaceHistory>*/(request_config)
+    (await axios.request/*<SpaceHistory>*/(dynamic_request_config)
         .then(resp => resp.data.data.cards)
         // axios即使catch了也不收窄类型就离谱 
         // void | AxiosResponse 不存在成员 data
@@ -236,15 +255,15 @@ let polling_dynamic = async () => {
         .map((v: any) => <Object>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}` })
         .forEach((v: any) => {
             if (v.category === "daily") {
-                app.sender.sendGroupMsg(group_id, `${name}发布了相簿:\n${v.description}\n${v.address}`)
+                app.sender.sendGroupMsg(group_id, `${name}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }: Picture) => `[CQ:image,file=${img_src}]`).join(" ")}`)
             }
             else {
-                app.sender.sendGroupMsg(group_id, `${name}发布了动态:\n${v.content}\n${v.address}`)
+                app.sender.sendGroupMsg(group_id, `${name}发布了动态:\n${v.address}\n${v.content}`)
             }
         })
     setTimeout(polling_dynamic, polling_delay)
 }
-axios.request<SpaceHistory>(request_config).then(resp => {
+axios.request<SpaceHistory>(dynamic_request_config).then(resp => {
     if (last_ts = resp.data.data.cards[0].desc.timestamp)
         // 任何falsy value都throw 包括 0 undefined null
         setTimeout(polling_dynamic, polling_delay)
