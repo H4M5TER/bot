@@ -84,11 +84,12 @@ let dynamic_request_config: AxiosRequestConfig = {
 let polling_dynamic = async () => {
     try {
         (await axios.request<SpaceHistory>(dynamic_request_config))
-            // 我是傻逼 在await里面加catch才会有await出来了是void的可能 在外面try catch就没事了
             .data.data.cards
             .filter(v => v.desc.timestamp > last_ts)
-            .map(v => <Object>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}` })
+            .map(v => <Object>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`, timestamp: v.desc.timestamp })
             .forEach((v: any) => {
+                if (v.timestamp > last_ts)
+                    last_ts = v.timestamp
                 if (v.category === "daily") {
                     groups.forEach(async group_id => {
                         app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }: Picture) => `[CQ:image,file=${img_src}]`).join(" ")}`)
