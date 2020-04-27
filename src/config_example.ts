@@ -22,26 +22,24 @@ const app = new App({
     selfId: 123456789
 })
 
-interface LiveDetectionConfig {
-    liver: string,
-    room: number
+interface Config {
+    delay: number
 }
-let live: LiveDetectionConfig = {
-    liver: "",
-    room: 123456,
+interface User {
+    user_id: number,
+    room_id: number,
+    nickname: string
 }
-
-interface DynamicRelayConfig {
-    uid: number,
-    delay: number,
+let user: User = {
+    user_id: 123456789,
+    room_id: 123456,
+    nickname: ""
 }
-let dynamic: DynamicRelayConfig = {
-    uid: 123456789,
+let config: Config = {
     delay: 30 * 1000
 }
-
 let groups: number[] = [
     123456789
 ]
 
-export { db, app, live, dynamic, groups }
+export { db, app, user, config, groups }

@@ -1,4 +1,4 @@
-import { app, live, dynamic, groups } from "./config"
+import { app, user, config, groups } from "./config"
 import { LiveTCP } from "bilibili-live-ws"
 import axios, { AxiosRequestConfig } from "axios"
 
@@ -20,14 +20,14 @@ interface room_info {
         }
     }
 }
-let room_address = `https://live.bilibili.com/${live.room}`, live_request_config: AxiosRequestConfig = {
+let room_address = `https://live.bilibili.com/${user.room_id}`, live_request_config: AxiosRequestConfig = {
     url: "https://api.live.bilibili.com/xlive/web-room/v1/index/getInfoByRoom",
     method: "get",
     params: {
-        room_id: live.room
+        room_id: user.room_id
     }
 }
-let room = new LiveTCP(live.room)
+let room = new LiveTCP(user.room_id)
 room.on("live", () => {
     console.log("直播间已连接")
 })
@@ -36,13 +36,13 @@ room.on("msg", (data) => {
         if (data.cmd === "LIVE") {
             groups.forEach(async group_id => {
                 // TODO: 随机发表情包
-                app.sender.sendGroupMsg(group_id, `${name}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
+                app.sender.sendGroupMsg(group_id, `${user.nickname}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
             })
             app.sender.setGroupWholeBan(743492765, true)
         }
         if (data.cmd === "PREPARING") {
             groups.forEach(async group_id => {
-                app.sender.sendGroupMsg(group_id, `${name}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
+                app.sender.sendGroupMsg(group_id, `${user.nickname}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
             })
             app.sender.setGroupWholeBan(743492765, false)
         }
@@ -72,7 +72,7 @@ let dynamic_request_config: AxiosRequestConfig = {
     url: "https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history",
     method: "get",
     params: {
-        host_uid: dynamic.uid,
+        host_uid: user.user_id,
         need_top: false
     }
 }
@@ -86,24 +86,24 @@ let polling_dynamic = async () => {
             .forEach((v: any) => {
                 if (v.category === "daily") {
                     groups.forEach(async group_id => {
-                        app.sender.sendGroupMsg(group_id, `${name}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }: Picture) => `[CQ:image,file=${img_src}]`).join(" ")}`)
+                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }: Picture) => `[CQ:image,file=${img_src}]`).join(" ")}`)
                     })
                 }
                 else {
                     groups.forEach(async group_id => {
-                        app.sender.sendGroupMsg(group_id, `${name}发布了动态:\n${v.address}\n${v.content}`)
+                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了动态:\n${v.address}\n${v.content}`)
                     })
                 }
             })
     } catch (e) {
         console.error(e)
     }
-    setTimeout(polling_dynamic, dynamic.delay)
+    setTimeout(polling_dynamic, config.delay)
 }
 axios.request<SpaceHistory>(dynamic_request_config).then(resp => {
     if (last_ts = resp.data.data.cards[0].desc.timestamp)
         // 任何falsy value都throw 包括 0 undefined null
-        setTimeout(polling_dynamic, dynamic.delay)
+        setTimeout(polling_dynamic, config.delay)
     else
         throw "连接动态失败";
 }).catch(e => console.error(e))
