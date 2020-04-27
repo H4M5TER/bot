@@ -57,15 +57,14 @@ room.on("msg", (data) => {
 })
 room.on("error", e => console.error(e))
 
-interface Origin {
-    // 转发动态是否也使用origin字段？bvid字段是否一定出现？
-    bvid: string
-}
 interface Card {
     card: string,
     desc: {
         dynamic_id_str: string
-        origin?: Origin
+        orig_type?: number
+        origin?: {
+            bvid: string
+        }
         timestamp: number
     }
 }
@@ -76,24 +75,24 @@ interface Item {
     content?: string
     category?: string
     description?: string
-    pictures: Picture[]
+    pictures?: Picture[]
     timestamp: number
 }
 interface ParsedCard {
     item: Item
+    origin?: string
 }
-interface ReOrganizedCard extends Item {
+interface Origin {
+    type: number
+    bvid?: string
+    cover?: string
+}
+interface ReOrganizedCard extends Item, Origin {
     address: string
-    origin: Origin
 }
 interface SpaceHistory {
     data: {
         cards: Card[]
-    }
-}
-interface VideoInfo {
-    data: {
-        pic: string
     }
 }
 let last_ts: number
@@ -110,24 +109,38 @@ let polling_dynamic = async () => {
         (await axios.request<SpaceHistory>(dynamic_request_config))
             .data.data.cards
             .filter(v => v.desc.timestamp > last_ts)
-            .map(v => <ReOrganizedCard>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`, origin: v.desc.origin! })
+            .map(v => {
+                let card: ParsedCard = JSON.parse(v.card)
+                return <ReOrganizedCard>{
+                    ...card.item,
+                    address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`,
+                    type: v.desc.orig_type,
+                    bvid: v.desc.origin!.bvid,
+                    cover: JSON.parse(card.origin!)?.pic
+                }
+            })
             .forEach(async v => {
                 if (v.timestamp > last_ts)
                     last_ts = v.timestamp
-                if (v.category === "daily") {
-                    groups.forEach(async group_id => {
-                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`)
-                    })
-                } else if (v.origin) {
-                    let cover_address = (await axios.get<VideoInfo>(`https://api.bilibili.com/x/web-interface/view?bvid=${v.origin.bvid}`)).data.data.pic
-                    groups.forEach(async group_id => {
-                        app.sender.sendGroupMsg(group_id, `${user.nickname}分享了视频:\n${v.address}\n${v.content}\nhttps://b23.tv/${v.origin.bvid}\n[CQ:image,file=${cover_address}`)
-                    })
-                } else {
+                if (v.category !== undefined) { // 未知
+                    if (v.category === "diary") // 带图片的动态
+                        groups.forEach(async group_id => {
+                            app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures!.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`)
+                        })
+                } else if (v.type != undefined) // 有源的动态
+                    // switch的缩进也太多了
+                    if (v.type === 8) // 转发视频
+                        groups.forEach(async group_id => {
+                            app.sender.sendGroupMsg(group_id, `${user.nickname}分享了视频:\n${v.address}\n${v.content}\nhttps://b23.tv/${v.bvid}\n[CQ:image,file=${v.cover!}`)
+                        })
+                    else if (v.type === 4) // 转发动态
+                        ;
+                    else
+                        throw "未知的源类型"
+                else // 普通动态
                     groups.forEach(async group_id => {
                         app.sender.sendGroupMsg(group_id, `${user.nickname}发布了动态:\n${v.address}\n${v.content}`)
                     })
-                }
             })
     } catch (e) {
         console.error(e)
