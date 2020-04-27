@@ -14,7 +14,7 @@ app.receiver.on("message", async (meta) => {
 app.start()
     .catch((e: Error) => console.error(e))
 
-interface room_info {
+interface RoomInfo {
     data: {
         room_info: {
             title: string
@@ -41,13 +41,13 @@ room.on("msg", (data) => {
         if (data.cmd === "LIVE") {
             groups.forEach(async group_id => {
                 // TODO: 随机发表情包
-                app.sender.sendGroupMsg(group_id, `${user.nickname}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
+                app.sender.sendGroupMsg(group_id, `${user.nickname}开播了[CQ:at,qq=all]\n${(await axios.request<RoomInfo>(live_request_config)).data.data.room_info.title}\n${room_address}`)
             })
             app.sender.setGroupWholeBan(743492765, true)
         }
         if (data.cmd === "PREPARING") {
             groups.forEach(async group_id => {
-                app.sender.sendGroupMsg(group_id, `${user.nickname}开播了[CQ:at,qq=all]\n${(await axios.request<room_info>(live_request_config)).data.data.room_info.title}\n${room_address}`)
+                app.sender.sendGroupMsg(group_id, `${user.nickname}开播了[CQ:at,qq=all]\n${(await axios.request<RoomInfo>(live_request_config)).data.data.room_info.title}\n${room_address}`)
             })
             app.sender.setGroupWholeBan(743492765, false)
         }
@@ -57,20 +57,44 @@ room.on("msg", (data) => {
 })
 room.on("error", e => console.error(e))
 
+interface Origin {
+    // 转发动态是否也使用origin字段？bvid字段是否一定出现？
+    bvid: string
+}
 interface Card {
     card: string,
     desc: {
-        dynamic_id_str: string,
+        dynamic_id_str: string
+        origin?: Origin
         timestamp: number
     }
+}
+interface Picture {
+    img_src: string
+}
+interface Item {
+    content?: string
+    category?: string
+    description?: string
+    pictures: Picture[]
+    timestamp: number
+}
+interface ParsedCard {
+    item: Item
+}
+interface ReOrganizedCard extends Item {
+    address: string
+    origin: Origin
 }
 interface SpaceHistory {
     data: {
         cards: Card[]
     }
 }
-interface Picture {
-    img_src: string
+interface VideoInfo {
+    data: {
+        pic: string
+    }
 }
 let last_ts: number
 let dynamic_request_config: AxiosRequestConfig = {
@@ -86,16 +110,20 @@ let polling_dynamic = async () => {
         (await axios.request<SpaceHistory>(dynamic_request_config))
             .data.data.cards
             .filter(v => v.desc.timestamp > last_ts)
-            .map(v => <Object>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`, timestamp: v.desc.timestamp })
-            .forEach((v: any) => {
+            .map(v => <ReOrganizedCard>{ ...JSON.parse(v.card).item, address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`, origin: v.desc.origin! })
+            .forEach(async v => {
                 if (v.timestamp > last_ts)
                     last_ts = v.timestamp
                 if (v.category === "daily") {
                     groups.forEach(async group_id => {
-                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }: Picture) => `[CQ:image,file=${img_src}]`).join(" ")}`)
+                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`)
                     })
-                }
-                else {
+                } else if (v.origin) {
+                    let cover_address = (await axios.get<VideoInfo>(`https://api.bilibili.com/x/web-interface/view?bvid=${v.origin.bvid}`)).data.data.pic
+                    groups.forEach(async group_id => {
+                        app.sender.sendGroupMsg(group_id, `${user.nickname}分享了视频:\n${v.address}\n${v.content}\nhttps://b23.tv/${v.origin.bvid}\n[CQ:image,file=${cover_address}`)
+                    })
+                } else {
                     groups.forEach(async group_id => {
                         app.sender.sendGroupMsg(group_id, `${user.nickname}发布了动态:\n${v.address}\n${v.content}`)
                     })
