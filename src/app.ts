@@ -5,7 +5,7 @@ import { appendFile } from "fs"
 
 app.receiver.on("message", async (meta) => {
     try {
-        console.log(`${(new Date(meta.time!)).toLocaleTimeString()}${(await app.sender.getGroupInfo(meta.groupId!)).groupName}(${meta.groupId})\n\t${meta.sender?.nickname}(${meta.userId}):${meta.message}`)
+        console.log(`${(new Date(meta.time! * 1000)).toLocaleTimeString()}${(await app.sender.getGroupInfo(meta.groupId!)).groupName}(${meta.groupId})\n\t${meta.sender?.nickname}(${meta.userId}):${meta.message}`)
     } catch (e) {
         console.error(e)
     }
@@ -60,6 +60,7 @@ room.on("error", e => console.error(e))
 interface Card {
     card: string,
     desc: {
+        timestamp: number
         dynamic_id_str: string
         orig_type: number
         orig_dy_id_str: string
@@ -116,6 +117,7 @@ let polling_dynamic = async () => {
                 let card: ParsedCard = JSON.parse(v.card)
                 let result: ReOrganizedCard = {
                     ...card.item,
+                    time: `[${new Date(v.desc.timestamp * 1000).toLocaleString()}]`,
                     address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`,
                 }
                 if (v.desc.orig_type === 8)
@@ -140,20 +142,20 @@ let polling_dynamic = async () => {
                 if (v.category !== undefined) { // 未知
                     if (v.category === "daily") // 带图片的动态
                         for (let group_id of groups)
-                            app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.description}\n${v.pictures!.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}\n${v.address}`)
+                            app.sender.sendGroupMsg(group_id, `${v.time}${user.nickname}发布了相簿:\n${v.description}\n${v.pictures!.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}\n${v.address}`)
                 } else if (v.origin !== undefined) // 有源的动态
                     // forEach回调函数中无法正确收窄类型 改用for of
                     if (v.origin.type === 8) // 转发视频
                         for (let group_id of groups)
-                            app.sender.sendGroupMsg(group_id, `${user.nickname}分享了视频:\n${v.content}\n${v.address}\n[CQ:image,file=${v.origin.cover}]\n${v.origin.address}`)
+                            app.sender.sendGroupMsg(group_id, `${v.time}${user.nickname}分享了视频:\n${v.content}\n${v.address}\n[CQ:image,file=${v.origin.cover}]\n${v.origin.address}`)
                     else if (v.origin.type === 4) // 转发动态
                         for (let group_id of groups)
-                            app.sender.sendGroupMsg(group_id, `${user.nickname}转发了动态:\n${v.content}\n${v.address}\n${v.origin.content}\n${v.origin.address}`)
+                            app.sender.sendGroupMsg(group_id, `${v.time}${user.nickname}转发了动态:\n${v.content}\n${v.address}\n${v.origin.content}\n${v.origin.address}`)
                     else
                         throw "未知的源类型"
                 else // 普通动态
                     for (let group_id of groups)
-                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了动态:\n${v.content}\n${v.address}`)
+                        app.sender.sendGroupMsg(group_id, `${v.time}${user.nickname}发布了动态:\n${v.content}\n${v.address}`)
             })
     } catch (e) {
         console.error(e)
