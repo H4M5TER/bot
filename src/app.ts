@@ -61,11 +61,11 @@ interface Card {
     card: string,
     desc: {
         dynamic_id_str: string
-        orig_type?: number
+        orig_type: number
+        orig_dy_id_str: string
         origin?: {
             bvid: string
         }
-        timestamp: number
     }
 }
 interface Picture {
@@ -84,11 +84,14 @@ interface ParsedCard {
 }
 interface Origin {
     type: number
-    bvid?: string
+    address: string
+    content?: string
     cover?: string
 }
-interface ReOrganizedCard extends Item, Origin {
+interface ReOrganizedCard extends Item {
     address: string
+    time: string
+    origin?: Origin
 }
 interface SpaceHistory {
     data: {
@@ -109,38 +112,48 @@ let polling_dynamic = async () => {
         (await axios.request<SpaceHistory>(dynamic_request_config))
             .data.data.cards
             .filter(v => v.desc.timestamp > last_ts)
-            .map(v => {
+            .map<ReOrganizedCard>(v => {
                 let card: ParsedCard = JSON.parse(v.card)
-                return <ReOrganizedCard>{
+                let result: ReOrganizedCard = {
                     ...card.item,
                     address: `https://t.bilibili.com/${v.desc.dynamic_id_str}`,
-                    type: v.desc.orig_type,
-                    bvid: v.desc.origin!.bvid,
-                    cover: JSON.parse(card.origin!)?.pic
                 }
+                if (v.desc.orig_type === 8)
+                    result.origin = {
+                        type: 8,
+                        address: `https://b23.tv/${v.desc.origin!.bvid}`,
+                        cover: JSON.parse(card.origin!).pic
+                    }
+                else if (v.desc.orig_type === 4)
+                    result.origin = {
+                        type: 4,
+                        address: `https://t.bilibili.com/${v.desc.orig_dy_id_str}`,
+                        content: JSON.parse(card.origin!).item.content
+                    }
+                else if (v.desc.orig_type !== 0)
+                    throw "未知的orig_type属性"
+                return result
             })
             .forEach(async v => {
                 if (v.timestamp > last_ts)
                     last_ts = v.timestamp
                 if (v.category !== undefined) { // 未知
-                    if (v.category === "diary") // 带图片的动态
-                        groups.forEach(async group_id => {
-                            app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.address}\n${v.description}\n${v.pictures!.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`)
-                        })
-                } else if (v.type != undefined) // 有源的动态
-                    // switch的缩进也太多了
-                    if (v.type === 8) // 转发视频
-                        groups.forEach(async group_id => {
-                            app.sender.sendGroupMsg(group_id, `${user.nickname}分享了视频:\n${v.address}\n${v.content}\nhttps://b23.tv/${v.bvid}\n[CQ:image,file=${v.cover!}`)
-                        })
-                    else if (v.type === 4) // 转发动态
-                        ;
+                    if (v.category === "daily") // 带图片的动态
+                        for (let group_id of groups)
+                            app.sender.sendGroupMsg(group_id, `${user.nickname}发布了相簿:\n${v.description}\n${v.pictures!.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}\n${v.address}`)
+                } else if (v.origin !== undefined) // 有源的动态
+                    // forEach回调函数中无法正确收窄类型 改用for of
+                    if (v.origin.type === 8) // 转发视频
+                        for (let group_id of groups)
+                            app.sender.sendGroupMsg(group_id, `${user.nickname}分享了视频:\n${v.content}\n${v.address}\n[CQ:image,file=${v.origin.cover}]\n${v.origin.address}`)
+                    else if (v.origin.type === 4) // 转发动态
+                        for (let group_id of groups)
+                            app.sender.sendGroupMsg(group_id, `${user.nickname}转发了动态:\n${v.content}\n${v.address}\n${v.origin.content}\n${v.origin.address}`)
                     else
                         throw "未知的源类型"
                 else // 普通动态
-                    groups.forEach(async group_id => {
-                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了动态:\n${v.address}\n${v.content}`)
-                    })
+                    for (let group_id of groups)
+                        app.sender.sendGroupMsg(group_id, `${user.nickname}发布了动态:\n${v.content}\n${v.address}`)
             })
     } catch (e) {
         console.error(e)
