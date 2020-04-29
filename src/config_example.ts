@@ -1,6 +1,6 @@
 import { App } from "koishi"
 import { MongoClient, Db } from "mongodb"
-import "./config.d"
+import { Config, User } from "./config.d"
 
 let db: Db;
 MongoClient.connect("mongodb://localhost:27017/", {

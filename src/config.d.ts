@@ -7,3 +7,5 @@ interface User {
     room_id: number,
     nickname: string
 }
+
+export { Config, User }
