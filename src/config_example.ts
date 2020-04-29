@@ -1,5 +1,6 @@
 import { App } from "koishi"
 import { MongoClient, Db } from "mongodb"
+import "./config.d"
 
 let db: Db;
 MongoClient.connect("mongodb://localhost:27017/", {
@@ -22,14 +23,6 @@ const app = new App({
     selfId: 123456789
 })
 
-interface Config {
-    delay: number
-}
-interface User {
-    user_id: number,
-    room_id: number,
-    nickname: string
-}
 let user: User = {
     user_id: 123456789,
     room_id: 123456,
