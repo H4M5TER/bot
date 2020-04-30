@@ -47,9 +47,8 @@ room.on("msg", async (data) => {
         if (data.cmd === "PREPARING") {
             for (let group_id of groups)
                 app.sender.sendGroupMsg(group_id,
-                    `${user.nickname}下播了[CQ:at,qq=all]`
-                    + `\n${(await axios.request(live_request_config)).data.data.room_info.title}`
-                    + `\n${room_address} `)
+                    `${user.nickname}下播了`
+                    + `\n全员禁言已解除`)
             app.sender.setGroupWholeBan(743492765, false)
         }
     } catch (e) {
@@ -100,7 +99,8 @@ let polling_dynamic = async () => {
                 if (desc.orig_type === 8) {
                     result.verb = "分享了视频"
                     result.origin.content = `${origin.title}\n[CQ:image,file=${origin.pic}]`
-                    result.origin.address = `https://b23.tv/${desc.origin.bvid}/`
+                    // b站视频短链接末尾不能有斜杠就离谱
+                    result.origin.address = `https://b23.tv/${desc.origin.bvid}`
                 }
                 else if (desc.orig_type === 4) {
                     result.verb = "转发了动态"
@@ -118,7 +118,7 @@ let polling_dynamic = async () => {
                 // 视频
                 result.verb = "发布了视频"
                 result.content = card.dynamic
-                result.address = `https://b23.tv/${desc.bvid}/`
+                result.address = `https://b23.tv/${desc.bvid}`
             }
             return result
         })
