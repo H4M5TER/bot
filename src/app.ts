@@ -24,6 +24,7 @@ let live_request_config: AxiosRequestConfig = {
     }
 }
 let room = new LiveTCP(user.room_id)
+let living = false
 room.on("live", () => {
     console.log("直播间已连接")
 })
@@ -36,13 +37,14 @@ room.on("msg", async (data) => {
                 `[${date.toLocaleTimeString()}]${data.info[2][1]}(${data.info[2][0]}):${data.info[1]}\n`,
                 () => { })
         }
-        if (data.cmd === "LIVE") {
+        if (data.cmd === "LIVE" && !living) {
             for (let group_id of groups)
                 app.sender.sendGroupMsg(group_id,
                     `${user.nickname}开播了[CQ:at,qq=all]`
                     + `\n${(await axios.request(live_request_config)).data.data.room_info.title}`
                     + `\n${room_address}`)
             app.sender.setGroupWholeBan(743492765, true)
+            living = true
         }
         if (data.cmd === "PREPARING") {
             for (let group_id of groups)
@@ -50,6 +52,7 @@ room.on("msg", async (data) => {
                     `${user.nickname}下播了`
                     + `\n全员禁言已解除`)
             app.sender.setGroupWholeBan(743492765, false)
+            living = false
         }
     } catch (e) {
         console.error(e)
