@@ -119,7 +119,7 @@ let polling_dynamic = async () => {
                     throw `未知的orig_type字段值:${desc.orig_type}`
             } else if (desc.type === 8) {
                 // 视频
-                result.verb = "发布了视频"
+                result.verb = "更新了视频[CQ:at,qq=all]"
                 result.content = card.dynamic
                 result.address = `https://b23.tv/${desc.bvid}`
             }
