@@ -14,7 +14,7 @@
 		"koishi": "^1.9.0",
 		"mongodb": "^3.5.6",
 		"bilibili-live-ws": "^4.2.0",
-		"axios": "^0.19.2"
+		"axios": "^0.21.1"
 	},
 	"devDependencies": {
 		"@types/mongodb": "^3.5.9",
