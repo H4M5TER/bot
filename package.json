@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.1.0",
 	"engines": {
-		"node": ">=12.16.2"
+		"node": ">=14.16.0"
 	},
 	"repository": "github:H4M5TER/workflow-bot",
 	"homepage": "https://github.com/h4m5ter/co-workflow-bot#readme",
@@ -11,16 +11,17 @@
 	"license": "MIT",
 	"author": "H4M5TER <zhuxx2003@163.com> (https://github.com/h4m5ter/)",
 	"dependencies": {
-		"koishi": "^1.9.0",
+		"koishi": "^3.0.1",
+		"koishi-adapter-onebot": "^3.0.0",
 		"mongodb": "^3.5.6",
-		"bilibili-live-ws": "^4.2.0",
-		"axios": "^0.19.2"
+		"bilibili-live-ws": "^5.1.1",
+		"axios": "^0.21.1"
 	},
 	"devDependencies": {
 		"@types/mongodb": "^3.5.9",
 		"@types/node": "^13.13.1",
-		"ts-node": "^8.9.0",
-		"typescript": "^3.8.3"
+		"ts-node": "^9.1.1",
+		"typescript": "^4.2.2"
 	},
 	"scripts": {
 		"start": "node -r ts-node/register src/app"

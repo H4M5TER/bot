@@ -3,14 +3,10 @@ import { LiveTCP } from "bilibili-live-ws"
 import axios, { AxiosRequestConfig } from "axios"
 import { appendFile } from "fs"
 
-app.receiver.on("message", async (meta) => {
-    try {
-        console.log(
-            `${(new Date(meta.time! * 1000)).toLocaleTimeString()}${(await app.sender.getGroupInfo(meta.groupId!)).groupName}(${meta.groupId})`
-            + `\n\t${meta.sender?.nickname}(${meta.userId}):${meta.message}`)
-    } catch (e) {
-        console.error(e)
-    }
+app.on("message", async (session) => {
+    console.log(
+        `${new Date().toLocaleTimeString()}${session.channelName}(${session.channelId})`
+        + `\n\t${session.username}(${session.userId}):${session.content}`)
 })
 
 app.start()
@@ -39,19 +35,16 @@ room.on("msg", async (data) => {
         }
         if (data.cmd === "LIVE" && !living) {
             for (let group_id of groups)
-                app.sender.sendGroupMsg(group_id,
+                app.bots[0].sendMessage(group_id,
                     `${user.nickname}开播了[CQ:at,qq=all]`
-                    + `\n${(await axios.request(live_request_config)).data.data.room_info.title}`
-                    + `\n${room_address}`)
-            app.sender.setGroupWholeBan(743492765, true)
+                    + `\n${(await axios.request(live_request_config)).data.data.room_info.title}\n`
+                    + room_address)
             living = true
         }
         if (data.cmd === "PREPARING") {
             for (let group_id of groups)
-                app.sender.sendGroupMsg(group_id,
-                    `${user.nickname}下播了`
-                    + `\n全员禁言已解除`)
-            app.sender.setGroupWholeBan(743492765, false)
+                app.bots[0].sendMessage(group_id,
+                    `${user.nickname}下播了`)
             living = false
         }
     } catch (e) {
@@ -127,21 +120,19 @@ let polling_dynamic = async () => {
         })
         for (let message of messages)
             if (message.type !== 1)
-                for (let group_id of groups)
-                    app.sender.sendGroupMsg(group_id,
-                        `[${message.time}]${user.nickname}${message.verb}`
-                        + `\n${message.content}`
-                        + `\n${message.address}`
-                    )
+                app.bots[0].broadcast(groups,
+                    `[${message.time}]${user.nickname}${message.verb}`
+                    + `\n${message.content}`
+                    + `\n${message.address}`
+                )
             else
-                for (let group_id of groups)
-                    app.sender.sendGroupMsg(group_id,
-                        `[${message.time}]${user.nickname}${message.verb}`
-                        + `\n${message.content}`
-                        + `\n${message.address}`
-                        + `\n\n${message.origin.content}`
-                        + `\n${message.origin.address}`
-                    )
+                app.bots[0].broadcast(groups,
+                    `[${message.time}]${user.nickname}${message.verb}`
+                    + `\n${message.content}`
+                    + `\n${message.address}`
+                    + `\n\n${message.origin.content}`
+                    + `\n${message.origin.address}`
+                )
     } catch (e) {
         console.error(e)
     }
