@@ -5,8 +5,8 @@ import { appendFile } from "fs"
 
 app.on("message", async (session) => {
     console.log(
-        `${new Date().toLocaleTimeString()}${session.channelName}(${session.channelId})`
-        + `\n\t${session.username}(${session.userId}):${session.content}`)
+        `${new Date().toLocaleTimeString()}${session.channelName}(${session.channelId})\n
+        \t${session.username}(${session.userId}):${session.content}`)
 })
 
 app.start()
@@ -34,17 +34,15 @@ room.on("msg", async (data) => {
                 () => { })
         }
         if (data.cmd === "LIVE" && !living) {
-            for (let group_id of groups)
-                app.bots[0].sendMessage(group_id,
-                    `${user.nickname}开播了[CQ:at,qq=all]`
-                    + `\n${(await axios.request(live_request_config)).data.data.room_info.title}\n`
-                    + room_address)
+            app.bots[0].broadcast(groups,
+                `${user.nickname}开播了[CQ:at,qq=all]\n
+                ${(await axios.request(live_request_config)).data.data.room_info.title}\n
+                ${room_address}`)
             living = true
         }
         if (data.cmd === "PREPARING") {
-            for (let group_id of groups)
-                app.bots[0].sendMessage(group_id,
-                    `${user.nickname}下播了`)
+            app.bots[0].broadcast(groups,
+                `${user.nickname}下播了`)
             living = false
         }
     } catch (e) {
@@ -85,8 +83,8 @@ let polling_dynamic = async () => {
                 // 相簿
                 result.verb = "发布了相簿"
                 result.content =
-                    `${card.item.description}`
-                    + `\n${card.item.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`
+                    `${card.item.description}\n
+                    ${card.item.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`
             } else if (desc.type === 1) { // 转发
                 let origin = JSON.parse(card.origin)
                 result.origin = {}
@@ -105,8 +103,8 @@ let polling_dynamic = async () => {
                 else if (desc.orig_type === 2) {
                     result.verb = "转发了相簿"
                     result.origin.content =
-                        `${origin.item.description}`
-                        + `\n${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`
+                        `${origin.item.description}\n
+                        ${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(" ")}`
                 }
                 else if (desc.orig_type !== 0)
                     throw `未知的orig_type字段值:${desc.orig_type}`
@@ -121,18 +119,16 @@ let polling_dynamic = async () => {
         for (let message of messages)
             if (message.type !== 1)
                 app.bots[0].broadcast(groups,
-                    `[${message.time}]${user.nickname}${message.verb}`
-                    + `\n${message.content}`
-                    + `\n${message.address}`
-                )
+                    `[${message.time}]${user.nickname}${message.verb}\n
+                    ${message.content}\n
+                    ${message.address}`)
             else
                 app.bots[0].broadcast(groups,
-                    `[${message.time}]${user.nickname}${message.verb}`
-                    + `\n${message.content}`
-                    + `\n${message.address}`
-                    + `\n\n${message.origin.content}`
-                    + `\n${message.origin.address}`
-                )
+                    `[${message.time}]${user.nickname}${message.verb}\n
+                    ${message.content}\n
+                    ${message.address}\n\n
+                    ${message.origin.content}\n
+                    ${message.origin.address}`)
     } catch (e) {
         console.error(e)
     }
