@@ -5,17 +5,20 @@
 	"license": "MIT",
 	"author": "H4M5TER <zhuxx2003@163.com> (https://github.com/h4m5ter/)",
 	"dependencies": {
-		"koishi": "^3.0.1",
-		"koishi-adapter-onebot": "^3.0.0",
-		"mongodb": "^3.5.6",
-		"bilibili-live-ws": "^5.1.1",
-		"axios": "^0.21.1"
+		"koishi": "^3.11.0",
+		"koishi-adapter-onebot": "^3.0.9",
+		"axios": "^0.21.1",
+		"bilibili-live-ws": "^5.1.1"
+	},
+	"optionalDependencies": {
+		"bufferutil": "^4.0.3",
+		"utf-8-validate": "^5.0.5"
 	},
 	"devDependencies": {
-		"@types/mongodb": "^3.5.9",
-		"@types/node": "^13.13.1",
-		"ts-node": "^9.1.1",
-		"typescript": "^4.2.3"
+		"typescript": "^4.2.4",
+		"@types/node": "^15.3.0",
+		"@tsconfig/node14": "^1.0.0",
+		"ts-node": "^9.1.1"
 	},
 	"scripts": {
 		"start": "node -r ts-node/register src/app"

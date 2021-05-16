@@ -1,13 +1,6 @@
 {
+    "extends": "@tsconfig/node14/tsconfig.json",
     "compilerOptions": {
-        "module": "CommonJS",
-        // "noImplicitAny": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "sourceMap": true,
-        "strictNullChecks": true
-    },
-    "include": [
-        "src/*"
-    ]
+        "strictNullChecks": false
+    }
 }
