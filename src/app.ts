@@ -67,16 +67,10 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
     for (let message of messages)
       if (message.type !== 1)
         app.bots[0].broadcast(user.push_groups,
-          `[${message.time}]${user.nickname}${message.verb}\n
-                    ${message.content}\n
-                    ${message.address}`)
+          `[${message.time}]${user.nickname}${message.verb}\n\n${message.content}\n\n${message.address}`)
       else
         app.bots[0].broadcast(user.push_groups,
-          `[${message.time}]${user.nickname}${message.verb}\n
-                    ${message.content}\n
-                    ${message.address}\n\n
-                    ${message.origin.content}\n
-                    ${message.origin.address}`)
+          `[${message.time}]${user.nickname}${message.verb}\n\n${message.content}\n${message.address}\n\n${message.origin.content}\n${message.origin.address}`)
     for (let { desc } of new_cards)
       if (desc.timestamp > last_ts)
         last_ts = desc.timestamp
@@ -112,9 +106,7 @@ users.forEach(user => {
       }
       if (data.cmd === 'LIVE' && !living) {
         app.bots[0].broadcast(user.push_groups,
-          `${user.nickname}开播了[CQ:at,qq=all]\n
-                ${(await axios.request(live_request_config)).data.data.room_info.title}\n
-                ${room_address}`)
+          `${user.nickname}开播了[CQ:at,qq=all]\n\n${(await axios.request(live_request_config)).data.data.room_info.title}\n\n${room_address}`)
         living = true
       }
       if (data.cmd === 'PREPARING') {
