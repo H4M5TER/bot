@@ -5,8 +5,8 @@
 	"license": "MIT",
 	"author": "H4M5TER <zhuxx2003@163.com> (https://github.com/h4m5ter/)",
 	"dependencies": {
-		"koishi": "^3.11.0",
-		"koishi-adapter-onebot": "^3.0.9",
+		"koishi": "^3.12.1",
+		"koishi-adapter-onebot": "^3.1.0",
 		"axios": "^0.21.1",
 		"bilibili-live-ws": "^5.1.1"
 	},
@@ -21,7 +21,6 @@
 		"ts-node": "^9.1.1"
 	},
 	"scripts": {
-		"start": "node -r ts-node/register src/app",
-		"install": "./init.sh"
+		"start": "node -r ts-node/register src/app"
 	}
 }
