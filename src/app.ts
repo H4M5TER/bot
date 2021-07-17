@@ -5,7 +5,7 @@ import { appendFile } from 'fs'
 
 app.on('message', async (session) => {
   console.log(
-    `${new Date().toLocaleTimeString()}${session.channelName}(${session.channelId})\n\t${session.username}(${session.userId}):${session.content}\n`)
+    `${new Date().toLocaleTimeString()} ${session.channelName}(${session.channelId})\n\t${session.username}(${session.userId}):${session.content}\n`)
 })
 
 app.start()
@@ -41,8 +41,7 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
         if (desc.orig_type === 8) {
           result.verb = '分享了视频'
           result.origin.content = `${origin.title}\n[CQ:image,file=${origin.pic}]`
-          // b站视频短链接末尾不能有斜杠就离谱
-          result.origin.address = `https://b23.tv/${desc.origin.bvid}`
+          result.origin.address = `https://www.bilibili.com/video/${desc.origin.bvid}/`
         }
         else if (desc.orig_type === 4) {
           result.verb = '转发了动态'
@@ -50,9 +49,7 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
         }
         else if (desc.orig_type === 2) {
           result.verb = '转发了相簿'
-          result.origin.content =
-            `${origin.item.description}\n
-                        ${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
+          result.origin.content = `${origin.item.description}\n${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
         }
         else if (desc.orig_type !== 0)
           throw `未知的orig_type字段值:${desc.orig_type}`
@@ -60,7 +57,7 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
         // 视频
         result.verb = '更新了视频[CQ:at,qq=all]'
         result.content = card.dynamic
-        result.address = `https://b23.tv/${desc.bvid}`
+        result.address = `https://www.bilibili.com/video/${desc.bvid}/`
       }
       return result
     })
