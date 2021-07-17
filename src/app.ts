@@ -51,18 +51,33 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
           result.verb = '转发了相簿'
           result.origin.content = `${origin.item.description}\n${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
         }
-        else if (desc.orig_type !== 0)
-          throw `未知的orig_type字段值:${desc.orig_type}`
+        else {
+          result.type = -1
+          console.error(`${new Date().toLocaleTimeString()} 拉取动态:`)
+          console.error(`未知的 orig_type 字段值: ${desc.orig_type}`)
+          console.error(origin)
+          console.error(card)
+          console.error(v)
+        }
       } else if (desc.type === 8) {
         // 视频
         result.verb = '更新了视频[CQ:at,qq=all]'
         result.content = card.dynamic
         result.address = `https://www.bilibili.com/video/${desc.bvid}/`
+      } else {
+        result.type = -1
+        console.error(`${new Date().toLocaleTimeString()} 拉取动态:`)
+        console.error(`未知的 type 字段值: ${desc.type}`)
+        console.error(card)
+        console.error(v)
       }
       return result
     })
     for (let message of messages)
-      if (message.type !== 1)
+      if (message.type === -1)
+        app.bots[0].broadcast(user.push_groups,
+          `[${message.time}]\n\n一条未知类型的动态\n\n${message.address}`)
+      else if (message.type !== 1)
         app.bots[0].broadcast(user.push_groups,
           `[${message.time}]${user.nickname}${message.verb}\n\n${message.content}\n\n${message.address}`)
       else
@@ -72,7 +87,16 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
       if (desc.timestamp > last_ts)
         last_ts = desc.timestamp
   } catch (e) {
-    console.error(e)
+    console.error(`${new Date().toLocaleTimeString()} 拉取动态:`)
+    if (e.isAxiosError) {
+      if (e.response)
+        console.error(`${e.response.status} ${e.response.statusText}`)
+      else if (e.request)
+        console.error(e.request)
+      else
+        console.error(e.message)
+    } else
+      console.error(e.toString())
   }
   setTimeout(polling_dynamic, config.delay, user, last_ts, dynamic_request_config)
 }
