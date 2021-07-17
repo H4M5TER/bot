@@ -23,16 +23,19 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
         time: new Date(desc.timestamp * 1000).toLocaleString(),
         address: `https://t.bilibili.com/${desc.dynamic_id_str}/`
       }
-      if (desc.type === 4) {
+      if (desc.type === 8) {
+        // 视频
+        result.verb = '更新了视频[CQ:at,qq=all]'
+        result.content = card.dynamic
+        result.address = `https://www.bilibili.com/video/${desc.bvid}/`
+      } else if (desc.type === 4) {
         // 动态
         result.verb = '发布了动态'
         result.content = card.item.content
       } else if (desc.type === 2) {
         // 相簿
         result.verb = '发布了相簿'
-        result.content =
-          `${card.item.description}\n
-                    ${card.item.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
+        result.content = `${card.item.description}\n${card.item.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
       } else if (desc.type === 1) { // 转发
         let origin = JSON.parse(card.origin)
         result.origin = {}
@@ -42,21 +45,17 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
           result.verb = '分享了视频'
           result.origin.content = `${origin.title}\n[CQ:image,file=${origin.pic}]`
           result.origin.address = `https://www.bilibili.com/video/${desc.origin.bvid}/`
-        }
-        else if (desc.orig_type === 4) {
+        } else if (desc.orig_type === 4) {
           result.verb = '转发了动态'
           result.origin.content = origin.item.content
-        }
-        else if (desc.orig_type === 2) {
+        } else if (desc.orig_type === 2) {
           result.verb = '转发了相簿'
           result.origin.content = `${origin.item.description}\n${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
-        }
-        else if (desc.orig_type === 4200) {
+        } else if (desc.orig_type === 4200) {
           result.verb = '转发了直播间'
           result.origin.content = `${origin.uname}的直播间\n[CQ:image,file${origin.cover}]\n${origin.title}`
           result.origin.address = `https://live.bilibili.com/${origin.roomid}`
-        }
-        else {
+        } else {
           result.type = -1
           console.error(`${new Date().toLocaleTimeString()} 拉取动态:`)
           console.error(`未知的 orig_type 字段值: ${desc.orig_type}`)
@@ -64,11 +63,6 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
           console.error(card)
           console.error(v)
         }
-      } else if (desc.type === 8) {
-        // 视频
-        result.verb = '更新了视频[CQ:at,qq=all]'
-        result.content = card.dynamic
-        result.address = `https://www.bilibili.com/video/${desc.bvid}/`
       } else {
         result.type = -1
         console.error(`${new Date().toLocaleTimeString()} 拉取动态:`)
