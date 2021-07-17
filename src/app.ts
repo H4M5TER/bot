@@ -2,10 +2,18 @@ import { app, users, config } from './config'
 import { LiveTCP } from 'bilibili-live-ws'
 import axios, { AxiosRequestConfig } from 'axios'
 import { appendFile } from 'fs'
+import { execSync } from 'child_process'
 
 app.on('message', async (session) => {
   console.log(
     `${new Date().toLocaleTimeString()} ${session.channelName}(${session.channelId})\n\t${session.username}(${session.userId}):${session.content}\n`)
+  if (session.parsed.appel)
+    if (/重启/.test(session.content)) {
+      session.send('正在重启')
+      execSync('pm2 restart all')
+    }
+    else
+      session.send('确认存活')
 })
 
 app.start()
