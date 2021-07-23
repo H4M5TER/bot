@@ -65,7 +65,7 @@ let polling_dynamic = async (user, last_ts, dynamic_request_config) => {
           result.origin.content = `${origin.item.description}\n${origin.pictures.map(({ img_src }) => `[CQ:image,file=${img_src}]`).join(' ')}`
         } else if (desc.orig_type === 4200) {
           result.verb = '转发了直播间'
-          result.origin.content = `${origin.uname}的直播间\n[CQ:image,file${origin.cover}]\n${origin.title}`
+          result.origin.content = `${origin.uname}的直播间\n[CQ:image,file=${origin.cover}]\n${origin.title}`
           result.origin.address = `https://live.bilibili.com/${origin.roomid}`
         } else {
           result.type = -1
