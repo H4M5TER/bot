@@ -952,11 +952,6 @@
   resolved "https://registry.npmmirror.com/@floating-ui/utils/-/utils-0.1.1.tgz#1a5b1959a528e374e8037c4396c3e825d6cf4a83"
   integrity sha512-m0G6wlnhm/AX0H12IOWtK8gASEMffnX08RtKkCgTdHb9JpHKGloI7icFfLg9ZmQeavcvR0PKmzxClyuFPSjKWw==
 
-"@h4m5ter/koishi-plugin-dice@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@h4m5ter/koishi-plugin-dice/-/koishi-plugin-dice-0.3.0.tgz#17110f29a46870bc628dc6cbc5edc593147be035"
-  integrity sha512-q2PoNsHB0ELyPAPEOeN1MiY79Ee5GB7Mk6uUrc/po2cONktQ8Wgvshrj/2yRVhxiNyjY+zmwTIa6XipDpmXtFA==
-
 "@haku530/pixivapi@^1.0.1":
   version "1.0.1"
   resolved "https://registry.npmmirror.com/@haku530/pixivapi/-/pixivapi-1.0.1.tgz#ce3e92ccbe93f9c3a1749e3861d923393c4d4140"
@@ -5867,6 +5862,11 @@ peek-readable@^4.1.0:
   resolved "https://registry.npmmirror.com/peek-readable/-/peek-readable-4.1.0.tgz#4ece1111bf5c2ad8867c314c81356847e8a62e72"
   integrity sha512-ZI3LnwUv5nOGbQzD9c2iDG6toheuXSZP5esSHBjopsXH4dg19soufvpUGA3uohi5anFtGb2lhAVdHzH6R/Evvg==
 
+peggy@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmmirror.com/peggy/-/peggy-1.2.0.tgz#657ba45900cbef1dc9f52356704bdbb193c2021c"
+  integrity sha512-PQ+NKpAobImfMprYQtc4Egmyi29bidRGEX0kKjCU5uuW09s0Cthwqhfy7mLkwcB4VcgacE5L/ZjruD/kOPCUUw==
+
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.npmmirror.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
@@ -6704,6 +6704,11 @@ tr46@~0.0.3:
   version "0.0.3"
   resolved "https://registry.npmmirror.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
+
+ts-pegjs@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.npmmirror.com/ts-pegjs/-/ts-pegjs-1.2.2.tgz#c990149c48a63e32525784caa4745deb25f083f2"
+  integrity sha512-nzxDbdHHKvYjfW05CBN8wvVXjx1+7uHg/aRiujcMNwUfdIaXzJ7Guw5gNI62scv7H2ymn2iHHZseDBIuO+B8gA==
 
 tsconfig-utils@^3.0.0, tsconfig-utils@^3.1.2:
   version "3.1.3"

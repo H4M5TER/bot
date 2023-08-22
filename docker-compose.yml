@@ -28,6 +28,7 @@ services:
     - qsign
     volumes:
     - ./go-cqhttp:/data
+    - ./koishi:/koishi:ro
     env_file:
     - .env
   qsign:
