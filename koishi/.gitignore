@@ -1,0 +1,5 @@
+kbot-data/
+downloads/
+.koishi/
+
+.env.local

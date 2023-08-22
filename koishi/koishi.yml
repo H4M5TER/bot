@@ -1,0 +1,205 @@
+host: 0.0.0.0
+port: 5140
+maxPort: 5149
+prefix:
+  - .
+nickname:
+  - 哈姆次郎
+plugins:
+  group:basic:
+    group:develop:
+      $collapsed: true
+      $if: env.NODE_ENV === 'development'
+      hmr:
+        root: .
+    group:command:
+      $collapsed: true
+      commands:
+        exec:
+          config:
+            authority: 4
+        teach:
+          options:
+            regexp:
+              authority: 1
+            action:
+              authority: 2
+          config:
+            authority: 1
+      locales: {}
+      rate-limit: {}
+    group:storage:
+      database-mongo: {}
+      assets-local: null
+      downloads: {}
+    group:service:
+      puppeteer: null
+      markdown: {}
+      cron: {}
+      ~translator-baidu: {}
+      ~translator-youdao: {}
+      ~text-censor: {}
+    group:console:
+      analytics: {}
+      ~auth: {}
+      config: {}
+      console:
+        open: false
+      dataview: {}
+      desktop:
+        $if: env.KOISHI_AGENT?.includes('Desktop')
+      explorer: {}
+      logger: {}
+      insight: {}
+      market:
+        registry:
+          endpoint: https://registry.npmjs.org/
+        search:
+          endpoint: https://registry.koishi.chat/index.json
+          proxyAgent: ${{ env.ENDPOINT_PROXY }}
+      sandbox: {}
+      status: {}
+      theme-vanilla: {}
+      changelog: {}
+      chat: {}
+      migration: {}
+      footer: {}
+    group:adapter:
+      ~@chronocat/adapter:3tk01j: {}
+      adapter-onebot:
+        selfId: '2993397759'
+    adapter-discord:
+      bots:
+        - token: ${{ env.TOKEN_DISCORD }}
+          proxyAgent: ${{ env.ENDPOINT_PROXY }}
+          intents:
+            presence: true
+          disabled: false
+      ~adapter-telegram: {}
+      ~adapter-kook: {}
+      ~adapter-lark: {}
+      ~gocqhttp:
+        signServer: https://captcha.koishi.xyz/sdk/dandelion/energy
+  group:function:
+    group:basic:
+      help: {}
+      bind: {}
+      callme: {}
+      sudo: {}
+      recall: {}
+      echo: {}
+      broadcast: {}
+      forward: {}
+      schedule: {}
+      inspect: {}
+    group:botman:
+      shutdown: {}
+      spawn:
+        shell: pwsh.exe
+        root: .
+        encoding: utf8
+      feedback:
+        operators:
+          - onebot:860844980
+      ~blame:
+        send:
+          private:
+            - onebot:860844980
+    group:chatman:
+      admin: {}
+      switch: {}
+      verifier:
+        onFriendRequest: true
+        onGuildRequest: 3
+      ~autokick: {}
+    group:interactive:
+      aircon: {}
+      ~marry:
+        keyword:
+          - 娶群友
+      repeater: {}
+      group:dialogue:
+        dialogue: {}
+        dialogue-author: {}
+        dialogue-context: {}
+        dialogue-flow: {}
+        dialogue-rate-limit: {}
+        dialogue-time: {}
+    group:query:
+      music:
+        showWarning: true
+      image-search:
+        saucenaoApiKey:
+          - ${{ env.TOKEN_SAUCENAO }}
+      douban: {}
+      instagram-image-video-downloader: {}
+      ~youtube: {}
+      ~v2ex: {}
+      ~twitter-images-videos: {}
+      ~javbus: {}
+      mcping: {}
+      ~nbnhhsh: {}
+      oeis: {}
+      screenshot: {}
+      ~weather: {}
+    group:textgen:
+      crazy-thursday: {}
+      hitokoto: {}
+      ~jrrp: {}
+      ~nonsense: {}
+      '@h4m5ter/dice': {}
+    group:imagegen:
+      color: {}
+      emojimix: {}
+      httpcat: {}
+      memes-api:8oybmb: {}
+      ~meme: {}
+      ~petpet: {}
+      ~qrcode: {}
+      ~rryth: {}
+      ~tex: {}
+    group:voicegen:
+      ~alipay-voice: {}
+    group:polling:
+      ~market-info: {}
+      ~rss: {}
+      ~bdynamic: {}
+      steam-status-subscribe:czfu0r:
+        key: ${{ env.TOKEN_STEAM }}
+        interval: 300000
+    group:tool:
+      ~crypto: {}
+      ~maya: {}
+      ~base64: {}
+      ~base16384: {}
+      ~unicode: {}
+      ~encodeUri: {}
+      ~decodeUri: {}
+    group:exec:
+      ~brainfuck: {}
+      eval: {}
+      ~glot: {}
+    group:tinygame:
+      chess: {}
+      guess-number: {}
+      hangman: {}
+    group:functional:
+      ~github: {}
+      ~discourse: null
+      ~shorturl: {}
+      ~who-at-me: {}
+    group:others:
+      ~nyan: {}
+    kbot:
+      superAdminQQ:
+        - '860844980'
+    ~bilibili-live-utils:rdqlic: {}
+    ~bilibili:y79jhf:
+      url:
+        enable: true
+      dynamic:
+        enable: true
+  ~pointfree:o9hajn: {}
+  autowithdraw:vko6qm: null
+request:
+  proxyAgent: ${{ env.ENDPOINT_PROXY }}

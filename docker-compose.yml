@@ -1,0 +1,29 @@
+# Usage:
+#     docker-compose up -d
+
+version: '3.7'
+
+services:
+  meme-generator:
+    image: meetwq/meme-generator:latest
+  koishi:
+    build: ./koishi
+    volumes:
+    - ./koishi:/koishi
+    depends_on:
+    - meme-generator
+    ports:
+    - 5140:5140
+    environment:
+    - TZ=Asia/Shanghai
+  qsign:
+    image: xzhouqd/qsign:core-1.1.7
+    environment:
+    - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
+  go-cqhttp:
+    image: ghcr.io/mrs4s/go-cqhttp:dev
+    depends_on:
+    - koishi
+    - qsign
+    volumes:
+    - ./go-cqhttp:/data
