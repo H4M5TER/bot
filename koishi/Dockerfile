@@ -5,4 +5,4 @@ RUN apk add --no-cache chromium nss freetype harfbuzz ca-certificates ttf-freefo
 VOLUME ["/koishi"]
 WORKDIR "/koishi"
 ENTRYPOINT ["/koishi/entrypoint.sh"]
-CMD [ "/koishi/node_modules/.bin/koishi", "start" ]
+CMD [ "yarn", "start" ]

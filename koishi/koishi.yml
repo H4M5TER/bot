@@ -7,6 +7,11 @@ nickname:
   - 哈姆次郎
 plugins:
   group:basic:
+    group:adapter:
+      $collapsed: true
+      adapter-onebot:
+        selfId: ${{ env.QQ_ACCOUNT }}
+        endpoint: ws://go-cqhttp:8080
     group:develop:
       $collapsed: true
       $if: env.NODE_ENV === 'development'
@@ -29,10 +34,13 @@ plugins:
       locales: {}
       rate-limit: {}
     group:storage:
-      database-mongo: {}
+      $collapsed: true
+      database-mongo:
+        host: mongo
       assets-local: null
       downloads: {}
     group:service:
+      $collapsed: true
       puppeteer: null
       markdown: {}
       cron: {}
@@ -40,6 +48,7 @@ plugins:
       ~translator-youdao: {}
       ~text-censor: {}
     group:console:
+      $collapsed: true
       analytics: {}
       ~auth: {}
       config: {}
@@ -56,7 +65,6 @@ plugins:
           endpoint: https://registry.npmjs.org/
         search:
           endpoint: https://registry.koishi.chat/index.json
-          proxyAgent: ${{ env.ENDPOINT_PROXY }}
       sandbox: {}
       status: {}
       theme-vanilla: {}
@@ -64,22 +72,6 @@ plugins:
       chat: {}
       migration: {}
       footer: {}
-    group:adapter:
-      ~@chronocat/adapter:3tk01j: {}
-      adapter-onebot:
-        selfId: '2993397759'
-    adapter-discord:
-      bots:
-        - token: ${{ env.TOKEN_DISCORD }}
-          proxyAgent: ${{ env.ENDPOINT_PROXY }}
-          intents:
-            presence: true
-          disabled: false
-      ~adapter-telegram: {}
-      ~adapter-kook: {}
-      ~adapter-lark: {}
-      ~gocqhttp:
-        signServer: https://captcha.koishi.xyz/sdk/dandelion/energy
   group:function:
     group:basic:
       help: {}
@@ -100,11 +92,11 @@ plugins:
         encoding: utf8
       feedback:
         operators:
-          - onebot:860844980
+          - ${{ env.QQ_ADMIN }}
       ~blame:
         send:
           private:
-            - onebot:860844980
+            - ${{ env.QQ_ADMIN }}
     group:chatman:
       admin: {}
       switch: {}
@@ -117,7 +109,10 @@ plugins:
       ~marry:
         keyword:
           - 娶群友
-      repeater: {}
+      repeater:
+        onRepeat:
+          minTimes: 3
+          probability: 0.4
       group:dialogue:
         dialogue: {}
         dialogue-author: {}
@@ -152,7 +147,9 @@ plugins:
       color: {}
       emojimix: {}
       httpcat: {}
-      memes-api:8oybmb: {}
+      memes-api:
+        requestConfig:
+          endpoint: http://meme-generator:2233
       ~meme: {}
       ~petpet: {}
       ~qrcode: {}
@@ -190,9 +187,7 @@ plugins:
       ~who-at-me: {}
     group:others:
       ~nyan: {}
-    kbot:
-      superAdminQQ:
-        - '860844980'
+    kbot: {}
     ~bilibili-live-utils:rdqlic: {}
     ~bilibili:y79jhf:
       url:
