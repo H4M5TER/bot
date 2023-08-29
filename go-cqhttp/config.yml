@@ -1,8 +1,8 @@
 # go-cqhttp 默认配置文件
 
 account: # 账号相关
-  uin: ${QQ_ACCOUNT} # QQ账号
-  password: ${QQ_PASSWORD} # 密码为空时使用扫码登录
+  uin: 2993397759 # QQ账号
+  password: pswd4HAMJIROU # 密码为空时使用扫码登录
   encrypt: false  # 是否开启密码加密
   status: 0      # 在线状态 请参考 https://docs.go-cqhttp.org/guide/config.html#在线状态
   relogin: # 重连设置
@@ -21,6 +21,7 @@ account: # 账号相关
   # 如果遇到 登录 45 错误, 或者发送信息风控的话需要填入一个服务器
   # 示例:
   # sign-server: 'http://127.0.0.1:8080' # 本地签名服务器
+  # sign-server: 'http://127.0.0.1:18963' # 本地签名服务器
   sign-server: 'http://qsign:8080'
   # sign-server: 'https://signserver.example.com' # 线上签名服务器
   # 服务器可使用docker在本地搭建或者使用他人开放的服务
@@ -66,7 +67,7 @@ message:
   # 是否上报自身消息
   report-self-message: false
   # 移除服务端的Reply附带的At
-  remove-reply-at: false
+  remove-reply-at: true
   # 为Reply附加更多信息
   extra-reply-data: false
   # 跳过 Mime 扫描, 忽略错误数据
@@ -132,11 +133,11 @@ servers:
       address: 0.0.0.0:8080
       middlewares:
         <<: *default # 引用默认中间件
-  - ws-reverse:
-      # 反向WS Universal 地址
-      # 注意 设置了此项地址后下面两项将会被忽略
-      universal: ws://koishi:5140/onebot
-      # 重连间隔 单位毫秒
-      reconnect-interval: 3000
-      middlewares:
-        <<: *default # 引用默认中间件
+  # - ws-reverse:
+  #     # 反向WS Universal 地址
+  #     # 注意 设置了此项地址后下面两项将会被忽略
+  #     universal: ws://host.docker.internal:5140/onebot
+  #     # 重连间隔 单位毫秒
+  #     reconnect-interval: 3000
+  #     middlewares:
+  #       <<: *default # 引用默认中间件

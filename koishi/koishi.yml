@@ -5,13 +5,21 @@ prefix:
   - .
 nickname:
   - 哈姆次郎
+logger:
+  levels:
+    command: 3
+    market: 1
+request: {}
 plugins:
   group:basic:
     group:adapter:
-      $collapsed: true
       adapter-onebot:
-        selfId: ${{ env.QQ_ACCOUNT }}
-        endpoint: ws://go-cqhttp:8080
+        selfId: '2993397759'
+        endpoint: ws://127.0.0.1:8080
+        protocol: ws
+      adapter-discord:9gdqtz:
+        token: OTYyNTk1MzQ2MzMxMDk5MTY4.GGAe2Z.CfTMkVVIhdn-u0jVLyukjGROWA66c6t7_G06HE
+        proxyAgent: socks://127.0.0.1:7890
     group:develop:
       $collapsed: true
       $if: env.NODE_ENV === 'development'
@@ -35,8 +43,7 @@ plugins:
       rate-limit: {}
     group:storage:
       $collapsed: true
-      database-mongo:
-        host: mongo
+      database-mongo: {}
       assets-local: null
       downloads: {}
     group:service:
@@ -92,11 +99,11 @@ plugins:
         encoding: utf8
       feedback:
         operators:
-          - ${{ env.QQ_ADMIN }}
+          - onebot:860844980
       ~blame:
         send:
           private:
-            - ${{ env.QQ_ADMIN }}
+            - onebot:860844980
     group:chatman:
       admin: {}
       switch: {}
@@ -125,7 +132,7 @@ plugins:
         showWarning: true
       image-search:
         saucenaoApiKey:
-          - ${{ env.TOKEN_SAUCENAO }}
+          - 5e7120171cf4a23b0e81c309dc30c43b19a39d9a
       douban: {}
       instagram-image-video-downloader: {}
       ~youtube: {}
@@ -149,7 +156,7 @@ plugins:
       httpcat: {}
       memes-api:
         requestConfig:
-          endpoint: http://meme-generator:2233
+          endpoint: http://127.0.0.1:23333
       ~meme: {}
       ~petpet: {}
       ~qrcode: {}
@@ -162,7 +169,7 @@ plugins:
       ~rss: {}
       ~bdynamic: {}
       steam-status-subscribe:czfu0r:
-        key: ${{ env.TOKEN_STEAM }}
+        key: 28D9BC837722138AB01B32AA86C31022
         interval: 300000
     group:tool:
       ~crypto: {}
@@ -187,14 +194,20 @@ plugins:
       ~who-at-me: {}
     group:others:
       ~nyan: {}
-    kbot: {}
-    ~bilibili-live-utils:rdqlic: {}
-    ~bilibili:y79jhf:
+    ~kbot:
+      superAdminQQ:
+        - '860844980'
+      KBotManage:
+        enabled: true
+      KBotBilibili:
+        enabled: true
+        dynamic:
+          useImage: true
+    ~bilibili-live-utils: {}
+    bilibili:
       url:
         enable: true
       dynamic:
         enable: true
-  ~pointfree:o9hajn: {}
-  autowithdraw:vko6qm: null
-request:
-  proxyAgent: ${{ env.ENDPOINT_PROXY }}
+  ~pointfree: {}
+  autowithdraw: {}

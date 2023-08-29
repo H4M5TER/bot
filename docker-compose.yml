@@ -4,40 +4,18 @@
 version: '3.7'
 
 services:
-  koishi:
-    build: ./koishi
-    volumes:
-    - ./koishi:/koishi
-    depends_on:
-    - meme-generator
-    - mongo
-    - go-cqhttp
-    ports:
-    - 5140:5140
-    env_file:
-    - .env
-  mongo:
-    image: mongo:latest
-    volumes:
-    - mongo-data:/data/db
-    ports:
-    - 27017:27017
   go-cqhttp:
-    image: ghcr.io/mrs4s/go-cqhttp:dev
+    image: ghcr.io/mrs4s/go-cqhttp:dev-old
     depends_on:
     - qsign
     volumes:
     - ./go-cqhttp:/data
     - ./koishi:/koishi:ro
-    env_file:
-    - .env
+    ports:
+    - 8080:8080
+    restart: always
   qsign:
     image: xzhouqd/qsign:core-1.1.7
     environment:
     - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
-  meme-generator:
-    image: meetwq/meme-generator:latest
-
-volumes:
-  mongo-data:
-    external: true
+    restart: always
