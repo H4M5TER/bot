@@ -39,12 +39,16 @@ plugins:
               authority: 2
           config:
             authority: 1
+        saucenao:
+          aliases:
+            - 搜图
       locales: {}
       rate-limit: {}
     group:storage:
       $collapsed: true
       database-mongo: {}
-      assets-local: null
+      assets-local:
+        selfUrl: http://host.docker.internal
       downloads: {}
     group:service:
       $collapsed: true
@@ -71,7 +75,7 @@ plugins:
         registry:
           endpoint: https://registry.npmjs.org/
         search:
-          endpoint: https://registry.koishi.chat/index.json
+          endpoint: https://registry.koishi.t4wefan.pub/index.json
       sandbox: {}
       status: {}
       theme-vanilla: {}
@@ -133,6 +137,7 @@ plugins:
       image-search:
         saucenaoApiKey:
           - 5e7120171cf4a23b0e81c309dc30c43b19a39d9a
+        proxyAgent: socks://127.0.0.1:7890
       douban: {}
       instagram-image-video-downloader: {}
       ~youtube: {}

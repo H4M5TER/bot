@@ -1,11 +1,9 @@
-# Usage:
-#     docker-compose up -d
-
 version: '3.7'
 
 services:
   go-cqhttp:
     image: ghcr.io/mrs4s/go-cqhttp:dev-old
+    restart: always
     depends_on:
     - qsign
     volumes:
@@ -13,9 +11,13 @@ services:
     - ./koishi:/koishi:ro
     ports:
     - 8080:8080
-    restart: always
   qsign:
     image: xzhouqd/qsign:core-1.1.7
+    restart: always
     environment:
     - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
+  meme-generator:
+    image: meetwq/meme-generator:latest
     restart: always
+    ports:
+    - 23333:2233
