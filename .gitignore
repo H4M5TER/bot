@@ -1,9 +1,0 @@
-data/
-logs/
-node_modules/
-
-*.exe
-*.log
-
-koishi/external/
-koishi/cache/memes/

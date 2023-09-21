@@ -1,2 +1,6 @@
 session.token
 device.json
+
+*.exe
+logs/
+data/

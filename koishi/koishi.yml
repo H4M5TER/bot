@@ -48,7 +48,7 @@ plugins:
       $collapsed: true
       database-mongo: {}
       assets-local:
-        selfUrl: http://host.docker.internal
+        selfUrl: http://host.docker.internal:5140
       downloads: {}
     group:service:
       $collapsed: true

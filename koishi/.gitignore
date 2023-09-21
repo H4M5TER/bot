@@ -1,5 +1,13 @@
-kbot-data/
+node_modules/
+
+data/
 downloads/
+kbot-data/
+
 .koishi/
+cache/
 
 .env.local
+
+*.log
+tsconfig.temp.json

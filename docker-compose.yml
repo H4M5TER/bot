@@ -3,6 +3,7 @@ version: '3.7'
 services:
   go-cqhttp:
     image: ghcr.io/mrs4s/go-cqhttp:dev-old
+    container_name: go-cqhttp
     restart: always
     depends_on:
     - qsign
@@ -13,11 +14,13 @@ services:
     - 8080:8080
   qsign:
     image: xzhouqd/qsign:core-1.1.7
+    container_name: qsign
     restart: always
     environment:
     - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
   meme-generator:
     image: meetwq/meme-generator:latest
+    container_name: meme-generator
     restart: always
     ports:
     - 23333:2233
