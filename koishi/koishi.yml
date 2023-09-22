@@ -17,8 +17,8 @@ plugins:
         selfId: '2993397759'
         endpoint: ws://127.0.0.1:8080
         protocol: ws
-      adapter-discord:9gdqtz:
-        token: OTYyNTk1MzQ2MzMxMDk5MTY4.GGAe2Z.CfTMkVVIhdn-u0jVLyukjGROWA66c6t7_G06HE
+      adapter-discord:
+        token: ${{ env.TOKEN_DISCORD }}
         proxyAgent: socks://127.0.0.1:7890
     group:develop:
       $collapsed: true
@@ -136,7 +136,7 @@ plugins:
         showWarning: true
       image-search:
         saucenaoApiKey:
-          - 5e7120171cf4a23b0e81c309dc30c43b19a39d9a
+          - ${{ env.TOKEN_SAUCENAO }}
         proxyAgent: socks://127.0.0.1:7890
       douban: {}
       instagram-image-video-downloader: {}
@@ -173,8 +173,8 @@ plugins:
       ~market-info: {}
       ~rss: {}
       ~bdynamic: {}
-      steam-status-subscribe:czfu0r:
-        key: 28D9BC837722138AB01B32AA86C31022
+      steam-status-subscribe:
+        key: ${{ env.TOKEN_STEAM }}
         interval: 300000
     group:tool:
       ~crypto: {}
