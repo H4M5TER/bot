@@ -45,11 +45,11 @@ plugins:
       locales: {}
       rate-limit: {}
     group:storage:
-      $collapsed: true
       database-mongo: {}
       assets-local:
         selfUrl: http://host.docker.internal:5140
       downloads: {}
+      cache-memory:j2m18k: {}
     group:service:
       $collapsed: true
       puppeteer: null
@@ -176,6 +176,8 @@ plugins:
       steam-status-subscribe:
         key: ${{ env.TOKEN_STEAM }}
         interval: 300000
+        quester:
+          proxyAgent: socks://127.0.0.1:7890
     group:tool:
       ~crypto: {}
       ~maya: {}
@@ -214,5 +216,8 @@ plugins:
         enable: true
       dynamic:
         enable: true
+      quester:
+        proxyAgent: socks://127.0.0.1:7890
   ~pointfree: {}
-  autowithdraw: {}
+  autowithdraw:
+    quoteEnable: true

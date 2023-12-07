@@ -1,6 +1,3 @@
-session.token
-device.json
-
-*.exe
-logs/
-data/
+*
+!config.yml
+!qsign.json
