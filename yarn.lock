@@ -2219,11 +2219,6 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-18.18.0.tgz#bd19d5133a6e5e2d0152ec079ac27c120e7f1763"
   integrity sha512-3xA4X31gHT1F1l38ATDIL9GpRLdwVhnEFC8Uikv5ZLlXATwrCYyPq7ZWHxzxc3J/30SUiwiYT+bQe0/XvKlWbw==
 
-"@types/node@^18.17.18":
-  version "18.17.18"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.17.18.tgz#acae19ad9011a2ab3d792232501c95085ba1838f"
-  integrity sha512-/4QOuy3ZpV7Ya1GTRz5CYSz3DgkKpyUptXuQ5PPce7uuyJAOR7r9FhkmxJfvcNUXyklbC63a+YvB3jxy7s9ngw==
-
 "@types/node@^20.6.3":
   version "20.6.3"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.6.3.tgz#5b763b321cd3b80f6b8dde7a37e1a77ff9358dd9"
@@ -5338,6 +5333,11 @@ koishi-plugin-status-pro@^1.1.7:
   dependencies:
     systeminformation "^5.17.9"
 
+koishi-plugin-steam-status-subscribe@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/koishi-plugin-steam-status-subscribe/-/koishi-plugin-steam-status-subscribe-0.2.0.tgz#a8b64c5ff3cd11ce4be473abcdebf3782f88c20c"
+  integrity sha512-lrN7ax1UWH7kGgCvHqlWkgsRZKFWWPyN3dkPsT+u17GNP3myyFUaVtZfP9cM2cR+2IBSsSyvdvlx+mJZCnFhXg==
+
 koishi-plugin-steam@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/koishi-plugin-steam/-/koishi-plugin-steam-0.2.7.tgz#453a54b2d3d4b4c87f0764fc0e3cf4cdb5afd05c"
@@ -6369,11 +6369,6 @@ peek-readable@^4.1.0:
   resolved "https://registry.yarnpkg.com/peek-readable/-/peek-readable-4.1.0.tgz#4ece1111bf5c2ad8867c314c81356847e8a62e72"
   integrity sha512-ZI3LnwUv5nOGbQzD9c2iDG6toheuXSZP5esSHBjopsXH4dg19soufvpUGA3uohi5anFtGb2lhAVdHzH6R/Evvg==
 
-peggy@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/peggy/-/peggy-1.2.0.tgz#657ba45900cbef1dc9f52356704bdbb193c2021c"
-  integrity sha512-PQ+NKpAobImfMprYQtc4Egmyi29bidRGEX0kKjCU5uuW09s0Cthwqhfy7mLkwcB4VcgacE5L/ZjruD/kOPCUUw==
-
 pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
@@ -7243,11 +7238,6 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
 
-ts-pegjs@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/ts-pegjs/-/ts-pegjs-1.2.2.tgz#c990149c48a63e32525784caa4745deb25f083f2"
-  integrity sha512-nzxDbdHHKvYjfW05CBN8wvVXjx1+7uHg/aRiujcMNwUfdIaXzJ7Guw5gNI62scv7H2ymn2iHHZseDBIuO+B8gA==
-
 tsconfig-utils@^3.0.0, tsconfig-utils@^3.1.2:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/tsconfig-utils/-/tsconfig-utils-3.1.3.tgz#a3a39900603d4c424149a9074056849fbf7dd081"
@@ -7809,6 +7799,6 @@ zod-to-json-schema@^3.20.4, zod-to-json-schema@^3.21.4:
   integrity sha512-fjUZh4nQ1s6HMccgIeE0VP4QG/YRGPmyjO9sAh890aQKPEk3nqbfUXhMFaC+Dr5KvYBm8BCyvfpZf2jY9aGSsw==
 
 zod@^3.21.4, zod@^3.22.2:
-  version "3.22.2"
-  resolved "https://registry.npmjs.org/zod/-/zod-3.22.2.tgz#3add8c682b7077c05ac6f979fea6998b573e157b"
-  integrity sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==
+  version "3.22.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
+  integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==
