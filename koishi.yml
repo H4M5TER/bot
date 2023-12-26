@@ -1,15 +1,56 @@
 port: 8080
-
+prefix:
+  - .
+  - 。
+nickname:
+  - 哈姆次郎
+logLevel: 3
+host: 0.0.0.0
 plugins:
   console:
     open: true
-  logger:
+  logger: null
   manager:
-  status:
-  sandbox:
-  onebot:
-    bots: []
-  discord:
-    bots: []
-  telegram:
-    bots: []
+    registry: https://registry.npmjs.org
+  status: null
+  adapter-discord:
+    bots:
+      - token: OTYyNTk1MzQ2MzMxMDk5MTY4.YlJ0xg.0joaGwiWWWL5XL8UlW_Di61sxP0
+        proxyAgent: http://localhost:7890
+        intents:
+          presence: true
+        disabled: false
+  adapter-onebot:
+    bots:
+      - selfId: '1075187715'
+        endpoint: ws://localhost:6701
+        protocol: ws
+        disabled: true
+      - selfId: '2993397759'
+        endpoint: ws://localhost:6700
+        protocol: ws
+        disabled: true
+  database-sqlite: null
+  callme: null
+  broadcast: null
+  chat: null
+  dataview: {}
+  insight: null
+  feedback:
+    operators:
+      - '860844980'
+  recall: null
+  sandbox: null
+  schedule: null
+  verifier: null
+  dice: null
+  music:
+    platform: netease
+    showWarning: true
+  image-search: null
+  duplicate-checker: null
+  ~teach: null
+  ~ygocard: null
+  ~hitokoto: null
+  changelog: {}
+  emojimix: null

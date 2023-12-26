@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./plugins/trpg"
+    },
+    {
+      "path": "./plugins/subscribe"
+    },
+    {
+      "path": "./plugins/dice"
+    },
+    {
+      "path": "./"
+    }
+  ]
+}

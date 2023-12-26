@@ -1,3 +1,4 @@
 ﻿packages:
   # all packages in subdirs of packages/ and components/
   - 'plugins/dice/'
+  - 'plugins/trpg/'

@@ -4,7 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "koishi-plugin-dice": ["plugins/dice/src"],
-      // "koishi-plugin-*": ["plugins/*/src"],
     },
   },
+  "exclude": [
+    "plugins/subscribe/",
+    "plugins/trpg/"
+  ]
 }
