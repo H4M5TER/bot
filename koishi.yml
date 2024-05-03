@@ -7,8 +7,6 @@ logger:
     command: 3
 plugins:
   group:base:
-    $collapsed: true
-    proxy-agent:emeuw1: {}
     group:server:
       server:ytglmz:
         host: 0.0.0.0
@@ -32,6 +30,7 @@ plugins:
       help:yujmcf: {}
       inspect:bn8dvt: {}
       locales:sx4hbm: {}
+      proxy-agent:emeuw1: {}
       rate-limit:7x5m5g: {}
       telemetry:doa1p0: {}
     group:console:
@@ -104,7 +103,8 @@ plugins:
     recall:4fbjsv: {}
     repeater:vzyh4r:
       onRepeat:
-        probability: 0.4
+        probability: 0.1
+        minTimes: 3
     schedule:qpoz6x: {}
     shutdown:mypgbk: {}
     spawn:0asqtg:
@@ -115,6 +115,7 @@ plugins:
     verifier:6z6r46:
       onFriendRequest: 1
       onGuildRequest: 2
+    echo:kd80yi: {}
   group:3oer65:
     $label: console
     ~chat:96prow: {}
@@ -144,7 +145,7 @@ plugins:
     downloads:5tzz90: {}
     ffmpeg:ulzpd8: {}
     lobby:wud9vq: {}
-    jieba:9wrqxx: {}
+    ~jieba:9wrqxx: {}
     markdown:31luah: {}
     puppeteer:ca813j: {}
     ~skia-canvas:ng5cbp: {}
@@ -211,3 +212,6 @@ plugins:
   ~message-counter:kwxuxg: {}
   ~subscribe-at:mazjf3: {}
   ~github:mmo7x8: {}
+  inspect-elements:w2y22h: {}
+  steam-trading:jebat2: {}
+  '@h4m5ter/dice:rz86lz': {}
