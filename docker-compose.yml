@@ -1,31 +1,21 @@
 version: '3.7'
 
 services:
-  go-cqhttp:
-    image: ghcr.io/mrs4s/go-cqhttp:1.2
-    container_name: go-cqhttp
-    restart: always
-    depends_on:
-    - qsign
-    volumes:
-    - ./go-cqhttp:/data
-    - ./data:/koishi/data:ro
+  lagrange:
+    image: ghcr.io/konatadev/lagrange.onebot:edge
+    container_name: lagrange
+    restart: unless-stopped
     ports:
     - 8080:8080
-  qsign:
-    image: xzhouqd/qsign:core-1.1.9
-    container_name: qsign
-    restart: always
-    ports:
-    - 8963:8080
-    environment:
-    - BASE_PATH=/srv/qsign/qsign/txlib/8.9.63
     volumes:
-    - ./go-cqhttp/qsign.json:/srv/qsign/qsign/txlib/8.9.63/config.json
+    - ./lagrange:/app/data
+    environment:
+    - UID=1000
+    - GID=1000
   meme-generator:
     image: meetwq/meme-generator:latest
     container_name: meme-generator
-    restart: always
+    restart: unless-stopped
     ports:
     - 23333:2233
 
