@@ -1,19 +1,22 @@
-version: '3.7'
-
 services:
   lagrange:
-    image: ghcr.io/konatadev/lagrange.onebot:edge
+    image: ghcr.io/lagrangedev/lagrange.onebot:edge
     container_name: lagrange
     restart: unless-stopped
     ports:
-    - 8080:8080
+    - 5141:5141
+    - 5142:5142
     volumes:
     - ./lagrange:/app/data
     environment:
     - UID=1000
     - GID=1000
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
   meme-generator:
-    image: meetwq/meme-generator:latest
+    image: meetwq/meme-generator:0.0.21
     container_name: meme-generator
     restart: unless-stopped
     ports:

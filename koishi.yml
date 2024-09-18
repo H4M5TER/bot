@@ -1,5 +1,6 @@
 prefix:
   - .
+  - 。
 nickname:
   - 哈姆次郎
 logger:
@@ -27,7 +28,16 @@ plugins:
             regexp:
               permissions:
                 - authority:1
+        recall:
+          config:
+            permissions:
+              - authority:1
+        emojimix:
+          config:
+            minInterval: 60
+            maxUsage: 10
       help:yujmcf: {}
+      http:c9rj17: {}
       inspect:bn8dvt: {}
       locales:sx4hbm: {}
       proxy-agent:emeuw1: {}
@@ -38,7 +48,9 @@ plugins:
       analytics:jh1gp7: {}
       android:97xk6s:
         $if: env.KOISHI_AGENT?.includes('Android')
-      ~auth:zupd3m: {}
+      auth:zupd3m:
+        admin:
+          password: ${{ env.TOKEN_CONSOLE }}
       config:1ypdho: {}
       console:0gp36z:
         open: false
@@ -50,8 +62,7 @@ plugins:
       insight:ui9vhy: {}
       market:7xhlft:
         search:
-          endpoint: https://registry.koishi.chat/index.json
-          proxyAgent: socks://127.0.0.1:7891
+          endpoint: https://koi.nyan.zone/registry/index.json
       notifier:oquyno: {}
       oobe:jo3oob: {}
       sandbox:ud4xnr: {}
@@ -59,8 +70,6 @@ plugins:
       theme-vanilla:bycst2: {}
     group:storage:
       database-mongo:pmafi8:
-        database: koishi
-      ~database-mysql:uhl50r:
         database: koishi
       ~database-postgres:z5x4ci:
         database: koishi
@@ -70,34 +79,22 @@ plugins:
         path: data/koishi.db
       assets-local:mk2bq9:
         selfUrl: http://host.docker.internal:5140
-    group:adapter:
-      adapter-onebot:oanjgm:
-        selfId: '2993397759'
-        protocol: ws
-        endpoint: ws://127.0.0.1:8080
-      ~adapter-dingtalk:c9z9ok: {}
-      ~adapter-discord:sb5ysi:
-        token: ${{ env.TOKEN_DISCORD }}
-        proxyAgent: socks://127.0.0.1:7891
-      ~adapter-kook:x3y5lh: {}
-      ~adapter-lark:hiuqlz: {}
-      ~adapter-line:jn2udn: {}
-      ~adapter-mail:q75nhz: {}
-      ~adapter-matrix:e5k2i1: {}
-      ~adapter-qq:aw9chq: {}
-      ~adapter-satori:5ay34e: {}
-      ~adapter-slack:vg4ttd: {}
-      ~adapter-telegram:hvryxi: {}
-      ~adapter-wechat-official:w8yvob: {}
-      ~adapter-wecom:iwi1bv: {}
-      ~adapter-whatsapp:0tdj0p: {}
-      ~adapter-zulip:ve8bka: {}
     group:develop:
       $if: env.NODE_ENV === 'development'
       hmr:e3jhfp:
         root: .
+  group:adapter:
+    adapter-onebot:oanjgm:
+      selfId: '2993397759'
+      protocol: ws
+      endpoint: ws://127.0.0.1:5141
+  group:3oer65:
+    $label: console
+    changelog:okgu2i: {}
+    footer:mbvbd7: {}
   group:common:
     ~blame:v858x5: {}
+    callme:fma52q: {}
     feedback:wfx5vb: {}
     ~forward:kacsv9: {}
     recall:4fbjsv: {}
@@ -116,28 +113,6 @@ plugins:
       onFriendRequest: 1
       onGuildRequest: 2
     echo:kd80yi: {}
-  group:3oer65:
-    $label: console
-    ~chat:96prow: {}
-    changelog:okgu2i: {}
-    footer:mbvbd7: {}
-  group:dialogue:
-    dialogue:q57gsk: {}
-    dialogue-author:gq1h2i: {}
-    dialogue-context:drv2cq: {}
-    dialogue-flow:j0ck1l: {}
-    dialogue-rate-limit:0t35uy: {}
-    dialogue-time:fo9o5w: {}
-  group:chatluna:
-    ~chatluna:b166oe: {}
-    ~chatluna-preset-market:vsi020: {}
-    ~chatluna-newbing-adapter:9ccr8r: {}
-    ~chatluna-openai-adapter:atsfqq: {}
-    ~chatluna-search-service:4pjrgz: {}
-    ~chatluna-embeddings-service:42tbi1: {}
-    ~chatluna-plugin-common:93nn8q: {}
-    ~chatluna-knowledge-chat:wi95jf: {}
-    ~chatluna-vector-store-service:2mvru1: {}
   group:service:
     cache-memory:9pyfcf: {}
     ~cache-database:b3z9x8: {}
@@ -145,17 +120,51 @@ plugins:
     downloads:5tzz90: {}
     ffmpeg:ulzpd8: {}
     lobby:wud9vq: {}
-    ~jieba:9wrqxx: {}
+    jieba:9wrqxx: {}
     markdown:31luah: {}
     puppeteer:ca813j: {}
     ~skia-canvas:ng5cbp: {}
-  group:execute:
-    brainfuck:d7qgej: {}
-    ~eval:av1ppz: {}
-    ~glot:f6x1ts: {}
+  group:dialogue:
+    $collapsed: true
+    dialogue:q57gsk: {}
+    dialogue-author:gq1h2i: {}
+    dialogue-context:drv2cq: {}
+    dialogue-flow:j0ck1l: {}
+    dialogue-rate-limit:0t35uy:
+      throttle:
+        - interval: 60000
+          responses: 10
+      preventLoop:
+        - participants: 1
+          length: 5
+          debounce: 300000
+    dialogue-time:fo9o5w: {}
+  ~group:chatluna:
+    $collapsed: true
+    chatluna:b166oe:
+      botName: 哈姆次郎
+      allowAtReply: false
+      isReplyWithAt: true
+      privateChatWithoutCommand: true
+      sendThinkingMessage: false
+      isProxy: true
+      proxyAddress: socks://127.0.0.1:7890
+    chatluna-preset-market:vsi020: {}
+    chatluna-newbing-adapter:9ccr8r: {}
+    chatluna-openai-adapter:atsfqq:
+      chatTimeLimit: 600
+      apiKeys:
+        - - ${{ env.TOKEN_GROQ }}
+          - https://api.groq.com/openai/v1
+    chatluna-search-service:4pjrgz: {}
+    chatluna-embeddings-service:42tbi1: {}
+    chatluna-plugin-common:93nn8q: {}
+    chatluna-knowledge-chat:wi95jf: {}
+    chatluna-vector-store-service:2mvru1: {}
+  brainfuck:d7qgej: {}
   group:search:
     abbreviation:qounxj: {}
-    image-search:f4tqf3:
+    ~image-search:f4tqf3:
       saucenaoApiKey:
         - ${{ env.TOKEN_SAUCENAO }}
       proxyAgent: socks://127.0.0.1:7891
@@ -164,19 +173,23 @@ plugins:
     $label: 解析
     base64:lrj087: {}
     github-opengraph:d6kaml: {}
-    '@h4m5ter/bilibili:scxunf':
-      dynamic: {}
+    bilibili:4gb0g9:
+      dynamic:
+        enable: false
+        cookie: ''
+        image: false
       url:
         enable: true
         urlExtract: true
-        maxline: 6
+        maxline: 8
+        behavior: text
     '@h4m5ter/youtube:y5xzur':
       apiKey: ${{ env.TOKEN_YOUTUBE }}
       quester:
         proxyAgent: socks://127.0.0.1:7891
   group:u4ou45:
     $label: 推送
-    steam-status-subscribe:p09pfk:
+    ~steam-status-subscribe:p09pfk:
       key: ${{ env.TOKEN_STEAM }}
       interval: 300000
       quester:
@@ -185,12 +198,10 @@ plugins:
     $label: 生成
     5k:lkxawo: {}
     ba-logo:efe5g8: {}
-    emojimix:wo17gk: {}
     httpcat:kf0d3q: {}
     ~npm-unused:mt862u: {}
     phlogo:tgvsls: {}
     screenshot:z391tq: {}
-    encodeuri:onulpj: {}
     '@h4m5ter/meal:eue4n3': {}
   group:nfmhrh:
     $label: 游戏
@@ -208,10 +219,35 @@ plugins:
     ~nyan:eqfreg: {}
     '@h4m5ter/autowithdraw:7oy315':
       quoteEnable: true
-  ~word-cloud:67793d: {}
+  ~word-cloud:67793d:
+    canvas: false
+  encodeuri:onulpj: {}
+  ~encodeb64:128vwc: {}
   ~message-counter:kwxuxg: {}
-  ~subscribe-at:mazjf3: {}
+  subscribe-at:mazjf3: {}
   ~github:mmo7x8: {}
   inspect-elements:w2y22h: {}
   steam-trading:jebat2: {}
   '@h4m5ter/dice:rz86lz': {}
+  ~davinci-003:02jmm3: {}
+  ~kbot:ycfuy4: {}
+  choose:z6ra0x: {}
+  ~memes-api:00i04t:
+    requestConfig:
+      endpoint: http://127.0.0.1:23333
+  emojimix:ukyat1: {}
+  '@h4m5ter/steaminfo:a2kcds':
+    render:
+      imageType: png
+    suggest:
+      params:
+        f: games
+        cc: US
+        realm: '1'
+        l: schinese
+        use_store_query: '1'
+        use_search_spellcheck: '1'
+        search_creators_and_tags: '1'
+  saucenao:ovdg0j:
+    apiKey: ${{ env.TOKEN_SAUCENAO }}
+  '@h4m5ter/eval-unsafe:4e88y3': {}
