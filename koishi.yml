@@ -7,7 +7,84 @@ logger:
   levels:
     command: 3
 plugins:
+  group:info:
+    abbreviation:qounxj: {}
+    github-opengraph:d6kaml: {}
+    saucenao:ovdg0j:
+      apiKey: ${{ env.TOKEN_SAUCENAO }}
+    bilibili:4gb0g9:
+      shared:
+        cookie: ''
+      dynamic:
+        enable: true
+      url:
+        enable: true
+        behavior: text
+        maxline: 8
+        urlExtract: true
+    '@h4m5ter/youtube:y5xzur':
+      apiKey: ${{ env.TOKEN_YOUTUBE }}
+    steam-trading:jebat2: {}
+    '@h4m5ter/steaminfo:a2kcds':
+      render:
+        imageType: png
+      suggest:
+        params:
+          f: games
+          cc: US
+          realm: '1'
+          l: schinese
+          use_store_query: '1'
+          use_search_spellcheck: '1'
+          search_creators_and_tags: '1'
+  group:meme:
+    5k:lkxawo: {}
+    ba-logo:efe5g8: {}
+    phlogo:tgvsls: {}
+    pjsk-pptr:e8o0li:
+      shouldSendSuccessMessageAfterDrawingEmoji: false
+    httpcat:kf0d3q: {}
+    ~memes-api:00i04t:
+      requestConfig:
+        endpoint: http://127.0.0.1:23333
+    emojimix:ukyat1: {}
+    '@h4m5ter/meal:eue4n3': {}
+  group:tool:
+    encodeuri:onulpj: {}
+    ~encodeb64:128vwc: {}
+    ~github:mmo7x8: {}
+    jq:gss367: {}
+  group:devtool:
+    inspect-elements:w2y22h: {}
+    '@h4m5ter/eval-unsafe:4e88y3': {}
+  group:convenient:
+    subscribe-at:mazjf3:
+      users:
+        - '860844980'
+    '@h4m5ter/autowithdraw:7oy315':
+      quoteEnable: true
+    ~imagify:fwne90: {}
+  group:chat:
+    choose:z6ra0x: {}
+    steam-status-subscribe:p09pfk:
+      key: ${{ env.TOKEN_STEAM }}
+      interval: 300000
+      quester:
+        proxyAgent: socks://127.0.0.1:7891
+    ~word-cloud:67793d:
+      canvas: false
+  group:nfmhrh:
+    $label: 游戏
+    chess:beoshm: {}
+    guess-number:mitw96: {}
+    hangman:dgylmv: {}
+    wordle:2w82f8: {}
+    ~wordle-game:9b22ga: {}
+    '@h4m5ter/dice:rz86lz': {}
+  group:misc:
+    brainfuck:d7qgej: {}
   group:base:
+    $collapsed: true
     group:server:
       server:ytglmz:
         host: 0.0.0.0
@@ -36,6 +113,25 @@ plugins:
           config:
             minInterval: 60
             maxUsage: 10
+        assign:
+          config:
+            permissions:
+              - authority:1
+        channel:
+          config:
+            permissions:
+              - authority:1
+        pjsk.绘制:
+          config:
+            minInterval: 60
+        gen:
+          create: true
+        ba:
+          name: gen/ba
+        phlogo:
+          name: gen/phlogo
+        5k:
+          name: gen/5k
       help:yujmcf: {}
       http:c9rj17: {}
       inspect:bn8dvt: {}
@@ -87,7 +183,7 @@ plugins:
     adapter-onebot:oanjgm:
       selfId: '2993397759'
       protocol: ws
-      endpoint: ws://127.0.0.1:5141
+      endpoint: ws://127.0.0.1:3001
   group:3oer65:
     $label: console
     changelog:okgu2i: {}
@@ -123,6 +219,7 @@ plugins:
     jieba:9wrqxx: {}
     markdown:31luah: {}
     puppeteer:ca813j: {}
+    screenshot:z391tq: {}
     ~skia-canvas:ng5cbp: {}
   group:dialogue:
     $collapsed: true
@@ -140,7 +237,6 @@ plugins:
           debounce: 300000
     dialogue-time:fo9o5w: {}
   ~group:chatluna:
-    $collapsed: true
     chatluna:b166oe:
       botName: 哈姆次郎
       allowAtReply: false
@@ -161,93 +257,9 @@ plugins:
     chatluna-plugin-common:93nn8q: {}
     chatluna-knowledge-chat:wi95jf: {}
     chatluna-vector-store-service:2mvru1: {}
-  brainfuck:d7qgej: {}
-  group:search:
-    abbreviation:qounxj: {}
-    ~image-search:f4tqf3:
-      saucenaoApiKey:
-        - ${{ env.TOKEN_SAUCENAO }}
-      proxyAgent: socks://127.0.0.1:7891
-    music:h5zbg3: {}
-  group:aed42l:
-    $label: 解析
-    base64:lrj087: {}
-    github-opengraph:d6kaml: {}
-    bilibili:4gb0g9:
-      dynamic:
-        enable: false
-        cookie: ''
-        image: false
-      url:
-        enable: true
-        urlExtract: true
-        maxline: 8
-        behavior: text
-    '@h4m5ter/youtube:y5xzur':
-      apiKey: ${{ env.TOKEN_YOUTUBE }}
-      quester:
-        proxyAgent: socks://127.0.0.1:7891
-  group:u4ou45:
-    $label: 推送
-    ~steam-status-subscribe:p09pfk:
-      key: ${{ env.TOKEN_STEAM }}
-      interval: 300000
-      quester:
-        proxyAgent: socks://127.0.0.1:7891
-  group:okumrz:
-    $label: 生成
-    5k:lkxawo: {}
-    ba-logo:efe5g8: {}
-    httpcat:kf0d3q: {}
-    ~npm-unused:mt862u: {}
-    phlogo:tgvsls: {}
-    screenshot:z391tq: {}
-    '@h4m5ter/meal:eue4n3': {}
-  group:nfmhrh:
-    $label: 游戏
-    chess:beoshm: {}
-    guess-number:mitw96: {}
-    hangman:dgylmv: {}
-    wordle:2w82f8: {}
-    ~wordle-game:9b22ga: {}
   group:booru:
-    ~booru:p48uyp: {}
-  group:15nn1c:
-    $label: 文本处理
-    ~text-censor:9qfixi: {}
-    ~imagify:fwne90: {}
-    ~nyan:eqfreg: {}
-    '@h4m5ter/autowithdraw:7oy315':
-      quoteEnable: true
-  ~word-cloud:67793d:
-    canvas: false
-  encodeuri:onulpj: {}
-  ~encodeb64:128vwc: {}
-  ~message-counter:kwxuxg: {}
-  subscribe-at:mazjf3: {}
-  ~github:mmo7x8: {}
-  inspect-elements:w2y22h: {}
-  steam-trading:jebat2: {}
-  '@h4m5ter/dice:rz86lz': {}
-  ~davinci-003:02jmm3: {}
-  ~kbot:ycfuy4: {}
-  choose:z6ra0x: {}
-  ~memes-api:00i04t:
-    requestConfig:
-      endpoint: http://127.0.0.1:23333
-  emojimix:ukyat1: {}
-  '@h4m5ter/steaminfo:a2kcds':
-    render:
-      imageType: png
-    suggest:
-      params:
-        f: games
-        cc: US
-        realm: '1'
-        l: schinese
-        use_store_query: '1'
-        use_search_spellcheck: '1'
-        search_creators_and_tags: '1'
-  saucenao:ovdg0j:
-    apiKey: ${{ env.TOKEN_SAUCENAO }}
-  '@h4m5ter/eval-unsafe:4e88y3': {}
+    booru:p48uyp:
+      showTips: false
+      nsfw: true
+      output: 2
+    booru-safebooru:mp74wz: {}
